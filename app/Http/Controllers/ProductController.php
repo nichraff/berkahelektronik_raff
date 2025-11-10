@@ -1,82 +1,109 @@
 <?php
-  
+
 namespace App\Http\Controllers;
-  
-use App\Models\Product;
-use Illuminate\Http\RedirectResponse;
+
+use App\Models\Product; 
+use App\Models\Category; 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Http\Requests\ProductStoreRequest;
-use App\Http\Requests\ProductUpdateRequest;
-  
+use Illuminate\Support\Facades\Storage;
+
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): View
     {
-        $products = Product::latest()->paginate(5);
-        
+        $products = Product::latest()->paginate(10); 
         return view('products.index', compact('products'))
-                    ->with('i', (request()->input('page', 1) - 1) * 5);
+               ->with('i', (request()->input('page', 1) - 1) * 10);
     }
-  
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create(): View
     {
-        return view('products.create');
+        $categories = Category::all(); 
+        return view('products.create', compact('categories'));
     }
-  
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(ProductStoreRequest $request): RedirectResponse
-    {   
-        Product::create($request->validated());
-         
-        return redirect()->route('products.index')
-                         ->with('success', 'Product created successfully.');
+
+    public function store(Request $request): RedirectResponse
+{
+    $request->validate([
+        'kategori' => 'required|exists:categories,id', 
+        'brand' => 'required|max:255',
+        'judul' => 'required|max:255',    
+        'model' => 'required|max:255',    
+        'harga' => 'required|numeric|min:0', 
+        'diskon' => 'nullable|integer|min:0|max:100', 
+        'garansi' => 'nullable|max:255',
+        'detail' => 'required',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+        $imageName = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/products', $imageName);
+        }
+
+$data = $request->except(['image', '_token']); 
+
+$data['image'] = $imageName;
+$data['diskon'] = $request->diskon ?? 0;
+
+Product::create($data); 
+
+return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
-  
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product): View
-    {
-        return view('products.show',compact('product'));
-    }
-  
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(Product $product): View
     {
-        return view('products.edit',compact('product'));
+        $categories = Category::all(); 
+        return view('products.edit', compact('product', 'categories'));
     }
-  
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(ProductUpdateRequest $request, Product $product): RedirectResponse
-    {
-        $product->update($request->validated());
-        
-        return redirect()->route('products.index')
-                        ->with('success','Product updated successfully');
+
+public function update(Request $request, Product $product): RedirectResponse
+{
+    $request->validate([
+        'kategori' => 'required|exists:categories,id', 
+        'brand' => 'required|max:255',
+        'judul' => 'required|max:255',   
+        'model' => 'required|max:255',    
+        'harga' => 'required|numeric|min:0', 
+        'diskon' => 'nullable|integer|min:0|max:100', 
+        'garansi' => 'nullable|max:255',
+        'detail' => 'required',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+    
+
+        $imageName = $product->image;
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::delete('public/products/' . $product->image);
+            }
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/products', $imageName);
+        }
+
+        $product->update($request->except('image', '_token', '_method') + ['image' => $imageName, 'diskon' => $request->diskon ?? 0]);
+
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
-  
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product): RedirectResponse
-    {
-        $product->delete();
-         
-        return redirect()->route('products.index')
-                        ->with('success','Product deleted successfully');
+   
+
+
+public function destroy(Product $product): RedirectResponse
+{
+   
+    if ($product->image) {
+        Storage::delete('public/products/' . $product->image);
     }
+    
+   
+    $product->delete();
+
+    return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+}
+
 }

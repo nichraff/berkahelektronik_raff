@@ -3,57 +3,81 @@
 @section('content')
 
 <div class="card mt-5">
-  <h2 class="card-header">Laravel 11 CRUD Example from scratch - ItSolutionStuff.com</h2>
-  <div class="card-body">
-        
-        @session('session')
-            <div class="alert alert-success" role="alert"> {{ $value }} </div>
-        @endsession
+  <h2>Barang Berkah Elektronik</h2>
+<div style="text-align: right; margin-bottom: 15px;">
+    <a class="btn btn-success" href="{{ route('products.create') }}">Tambah Produk</a>
+</div>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="btn btn-success btn-sm" href="{{ route('products.create') }}"> <i class="fa fa-plus"></i> Create New Product</a>
-        </div>
 
-        <table class="table table-bordered table-striped mt-4">
-            <thead>
-                <tr>
-                    <th width="80px">No</th>
-                    <th>Name</th>
-                    <th>Details</th>
-                    <th width="250px">Action</th>
-                </tr>
-            </thead>
+@if ($message = Session::get('success'))
+<div class="alert alert-success alert-block">
+    <button type="button" class="close" data-dismiss="alert">×</button>    
+    <strong>{{ $message }}</strong>
+</div>
+@endif
 
-            <tbody>
-            @forelse ($products as $product)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->detail }}</td>
-                    <td>
-                        <form action="{{ route('products.destroy',$product->id) }}" method="POST">
-           
-                            <a class="btn btn-info btn-sm" href="{{ route('products.show',$product->id) }}"><i class="fa-solid fa-list"></i> Show</a>
-            
-                            <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-           
-                            @csrf
-                            @method('DELETE')
-              
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="4">There are no data.</td>
-                </tr>
-            @endforelse
-            </tbody>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th >No</th>
+            <th>Kategori</th>
+            <th style="text-align: center;">Brand</th>
+            <th>Judul</th>
+            <th>Model</th>
+            <th>Harga</th>
+            <th width="100px">Diskon (%)</th>
+            <th width="200px">Harga Setelah Diskon</th>
+            <th>Garansi</th>
+            <th>Detail</th>
+            <th>Gambar</th>
+            <th width="120px">Action</th> </tr>
+    </thead>
+    
+    <tbody>
+    @foreach ($products as $product)
+<tr>
+    <td>{{ ++$i }}</td>
 
-        </table>
-      
-        {!! $products->links() !!}
+    <td>{{ $product->category->name ?? 'N/A' }}</td>
+    
+    <td>{{ $product->brand }}</td>
+    
+    <td>{{ $product->judul }}</td>
+    
+    <td>{{ $product->model }}</td>
+    
+    <td>Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
+    
+    <td>{{ $product->diskon }}%</td>
+    
+    <td>Rp {{ number_format($product->harga_akhir, 0, ',', '.') }}</td>
+    
+    <td>{{ $product->garansi }}</td>
+    
+    <td>{{ $product->detail }}</td>
+    
+    <td>
+        @if($product->image)
+            <img src="{{ asset('storage/products/' . $product->image) }}" width="100px">
+        @else
+            No Image
+        @endif
+    </td>
+    
+    <td>
+        <form action="{{ route('products.destroy',$product->id) }}" method="POST">
+            <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}">Edit</a>
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        </form>
+    </td>
+</tr>
+@endforeach
+    </tbody>
+</table>
+
+{!! $products->links() !!}
 
   </div>
 </div>  

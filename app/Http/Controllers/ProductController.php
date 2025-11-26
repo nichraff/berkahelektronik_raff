@@ -11,109 +11,146 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index(): View
+    // ===================================================
+    // LIST PRODUK
+    // ===================================================
+    public function index(Request $request): View
     {
-        $products = Product::latest()->paginate(20); 
-        return view('products.index', compact('products'))
-               ->with('i', (request()->input('page', 1) - 1) * 20);
+        // 1. Ambil keyword dari request. Menggunakan 'keyword' sesuai dengan nama input di form Navbar.
+        $keyword = $request->input('keyword'); 
+
+        // 2. Query produk + filter judul jika ada pencarian
+        $products = Product::when($keyword, function ($query, $keyword) {
+            // Menggunakan LIKE dengan wildcard (%) untuk pencarian yang fleksibel di kolom 'judul'
+            return $query->where('judul', 'like', '%' . $keyword . '%');
+        })
+        ->latest()
+        // 3. Penting: Tambahkan withQueryString() agar link pagination membawa keyword pencarian
+        ->paginate(20)
+        ->withQueryString(); 
+
+        // 4. Mengirim keyword (opsional, tapi baik untuk menampilkan status pencarian)
+        return view('products.index', compact('products', 'keyword')) 
+            ->with('i', (request()->input('page', 1) - 1) * 20);
     }
 
+
+    // ===================================================
+    // TAMPILKAN FORM TAMBAH
+    // ===================================================
     public function create(): View
     {
-        $categories = Category::all(); 
+        $categories = Category::all();
         return view('products.create', compact('categories'));
     }
 
+    // ===================================================
+    // STORE / SIMPAN PRODUK
+    // ===================================================
     public function store(Request $request): RedirectResponse
     {
-    $request->validate([
-        'kategori' => 'required|exists:categories,id', 
-        'brand' => 'required|max:255',
-        'judul' => 'required|max:255',    
-        'model' => 'required|max:255',
-        'stok' => 'required|integer|min:0',     
-        'harga' => 'required|numeric|min:0', 
-        'diskon' => 'nullable|integer|min:0|max:100', 
-        'garansi' => 'nullable|max:255',
-        'detail' => 'required',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ]);
+        $request->validate([
+            'kategori' => 'required|exists:categories,id',
+            'brand'    => 'required|max:255',
+            'judul'    => 'required|max:255',
+            'model'    => 'required|max:255',
+            'stok'     => 'required|integer|min:0',
+            'harga'    => 'required|numeric|min:0',
+            'diskon'   => 'nullable|integer|min:0|max:100',
+            'garansi'  => 'nullable|max:255',
+            'detail'   => 'required',
+            'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
+        // Upload gambar
         $imageName = null;
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('products', $imageName, 'public');
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->storeAs('products', $imageName, 'public');
         }
 
-    $data = $request->except(['image', '_token']); 
+        // Simpan data
+        $data = $request->except('image');
+        $data['image']  = $imageName;
+        $data['diskon'] = $request->diskon ?? 0;
 
-    $data['image'] = $imageName;
-    $data['diskon'] = $request->diskon ?? 0;
-    $data['stok'] = $request->stok ?? 0;
+        Product::create($data);
 
-    Product::create($data); 
+        return redirect()->route('products.index')
+            ->with('success', 'Produk berhasil ditambahkan.');
+    }
 
-    return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan.');
-        }
-        
-        public function edit(Product $product): View
-        {
-            $categories = Category::all(); 
-            return view('products.edit', compact('product', 'categories'));
-        }
+    // ===================================================
+    // EDIT PRODUK
+    // ===================================================
+    public function edit(Product $product): View
+    {
+        $categories = Category::all();
+        return view('products.edit', compact('product', 'categories'));
+    }
 
+    // ===================================================
+    // UPDATE PRODUK
+    // ===================================================
     public function update(Request $request, Product $product): RedirectResponse
     {
         $request->validate([
-            'kategori' => 'required|exists:categories,id', 
-            'brand' => 'required|max:255',
-            'judul' => 'required|max:255',   
-            'model' => 'required|max:255',
+            'kategori' => 'required|exists:categories,id',
+            'brand'    => 'required|max:255',
+            'judul'    => 'required|max:255',
+            'model'    => 'required|max:255',
             'tambah_stok' => 'nullable|integer|min:0',
-            'harga' => 'required|numeric|min:0', 
-            'diskon' => 'nullable|integer|min:0|max:100', 
-            'garansi' => 'nullable|max:255',
-            'detail' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'harga'    => 'required|numeric|min:0',
+            'diskon'   => 'nullable|integer|min:0|max:100',
+            'garansi'  => 'nullable|max:255',
+            'detail'   => 'required',
+            'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
-        $data = $request->except('image', '_token', '_method', 'tambah_stok'); 
-        $stok_sekarang = $product->stok; 
 
-        if ($request->filled('tambah_stok')) {
-            $stok_terbaru = $stok_sekarang + $request->tambah_stok;
-            $data['stok'] = $stok_terbaru; 
-        } else {
-            $data['stok'] = $stok_sekarang;
-        }
+        // Data kecuali image & stok tambahan
+        $data = $request->except(['image', 'tambah_stok']);
 
-        $imageName = $product->image;
+        // Update stok
+        $data['stok'] = $product->stok + ($request->tambah_stok ?? 0);
+
+        // Upload gambar baru jika ada
         if ($request->hasFile('image')) {
+
+            // Hapus gambar lama
             if ($product->image) {
                 Storage::disk('public')->delete('products/' . $product->image);
             }
 
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-
-            $image->storeAs('products', $imageName, 'public');
+            // Simpan gambar baru
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->storeAs('products', $imageName, 'public');
+            $data['image'] = $imageName;
         }
 
-        $product->update($request->except('image', '_token', '_method') + ['image' => $imageName, 'diskon' => $request->diskon ?? 0]);
+        // Default diskon
+        $data['diskon'] = $request->diskon ?? 0;
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+        // Update data
+        $product->update($data);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Produk berhasil diperbarui.');
     }
-   
 
-
+    // ===================================================
+    // HAPUS PRODUK + GAMBAR
+    // ===================================================
     public function destroy(Product $product): RedirectResponse
     {
-    if ($product->image) {
-        Storage::delete('public/products/' . $product->image);
-    }
-   
-    $product->delete();
-    return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+        // Hapus file gambar
+        if ($product->image) {
+            Storage::disk('public')->delete('products/' . $product->image);
+        }
+
+        // Hapus data di database
+        $product->delete();
+
+        return redirect()->route('products.index')
+            ->with('success', 'Produk berhasil dihapus.');
     }
 }

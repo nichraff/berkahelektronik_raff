@@ -109,39 +109,41 @@
 
     <!-- ================= NAVBAR ================= -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; top: 0; width: 100%; z-index: 1030;">
-        <div class="container-fluid">
+    <div class="container-fluid">
 
-            <a class="navbar-brand" href="#">
-                TOKO BERKAH<br>ELEKTRONIK
-            </a>
+        <a class="navbar-brand" href="#">
+            TOKO BERKAH<br>ELEKTRONIK
+        </a>
 
-            <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center">
 
-                <!-- Search -->
+            <form action="{{ route('products.index') }}" method="GET" class="d-flex me-3">
                 <input type="text" 
-                       class="form-control form-control-sm me-3" 
+                       class="form-control form-control-sm" 
                        style="width: 250px;" 
-                       placeholder="Cari Elektronik">
+                       placeholder="Cari Elektronik"
+                       name="keyword"
+                       value="{{ request('keyword') }}">
+                
+                <button type="submit" class="btn btn-sm btn-outline-primary ms-2 d-none d-sm-block">Cari</button>
+            </form>
+            <i class="bi bi-person fs-4"></i>
 
-                <!-- ICON USER -->
-                <i class="bi bi-person fs-4"></i>
+            @auth
+                @if(auth()->user()->role === 'admin')
+                    <span class="ms-2 fw-bold">Admin</span>
+                @else
+                    <span class="ms-2 fw-bold">{{ auth()->user()->name }}</span>
+                @endif
+            @endauth
 
-                <!-- ROLE / AUTH TEXT -->
-                @auth
-                    @if(auth()->user()->role === 'admin')
-                        <span class="ms-2 fw-bold">Admin</span>
-                    @else
-                        <span class="ms-2 fw-bold">{{ auth()->user()->name }}</span>
-                    @endif
-                @endauth
+            @guest
+                <span class="ms-2 fw-bold">Guest</span>
+            @endguest
 
-                @guest
-                    <span class="ms-2 fw-bold">Guest</span>
-                @endguest
-
-            </div>
         </div>
-    </nav>
+    </div>
+</nav>
     <!-- ================= END NAVBAR =============== -->
 
     <div class="container mt-4">

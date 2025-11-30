@@ -1,7 +1,5 @@
 <?php
 
-// database/migrations/xxxx_xx_xx_xxxxxx_create_products_table.php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +11,8 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
 
-            // Kolom untuk relasi ke tabel 'categories'
-            $table->unsignedBigInteger('kategori'); // FIX: Menggunakan 'kategori'
+            // Kolom untuk relasi
+            $table->unsignedBigInteger('kategori');
 
             $table->string('brand');
             $table->string('judul'); 
@@ -23,12 +21,16 @@ return new class extends Migration
             $table->integer('diskon')->default(0)->nullable(); 
             $table->string('garansi')->nullable();
             $table->text('detail');
-            $table->string('image')->nullable();
+
+            // Jadi URL gambar dari Google Drive:
+            $table->string('image_url')->nullable();
 
             $table->timestamps();
 
-            // Definisi Foreign Key
-            $table->foreign('kategori')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('kategori')
+                  ->references('id')
+                  ->on('categories')
+                  ->onDelete('cascade');
         });
     }
 

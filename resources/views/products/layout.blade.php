@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-
         /* CSS UNTUK HIDDEN SCROLLING  */
         .hidden-scroll {
             -ms-overflow-style: none; 
@@ -56,9 +55,7 @@
             font-weight: 600;
         }
 
-
         /* --- CUSTOM WIDTH UNTUK SETIAP KOLOM --- */
-
         table.product-table th:nth-child(1) { width: 40px; }    /* No */
         table.product-table th:nth-child(2) { width: 90px; }    /* Kategori */
         table.product-table th:nth-child(3) { width: 90px; }    /* Brand */
@@ -66,7 +63,7 @@
         table.product-table th:nth-child(5) { width: 80px; }    /* Model */
         table.product-table th:nth-child(6) { width: 60px; }    /* Stok */
         table.product-table th:nth-child(7) { width: 110px; }   /* Harga */
-        table.product-table th:nth-child(8) { width: 100px; }    /* Diskon */
+        table.product-table th:nth-child(8) { width: 100px; }   /* Diskon */
         table.product-table th:nth-child(9) { width: 130px; }   /* Harga Setelah Diskon */
         table.product-table th:nth-child(10) { width: 90px; }   /* Garansi */
         table.product-table th:nth-child(11) { width: 140px; }  /* Detail */
@@ -78,14 +75,12 @@
             border-radius: 5px;
         }
 
-
         .table th, .table td {
             border: 1px solid #dee2e6;
             text-align: center;
             vertical-align: middle;
             padding: 8px;
         }
-
         
         .table thead th {
             border-top: none;
@@ -102,6 +97,14 @@
             border-radius: 6px;
         }
 
+        .highlight {
+            background-color: #fef3c7; /* Kuning muda */
+    color: #92400e; /* Coklat tua */
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid #f59e0b;
+        }
     </style>
 </head>
 
@@ -111,17 +114,23 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; top: 0; width: 100%; z-index: 1030;">
         <div class="container-fluid">
 
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ route('products.index') }}">
                 TOKO BERKAH<br>ELEKTRONIK
             </a>
 
             <div class="d-flex align-items-center">
 
-                <!-- Search -->
-                <input type="text" 
-                       class="form-control form-control-sm me-3" 
-                       style="width: 250px;" 
-                       placeholder="Cari Elektronik">
+                <!-- Search Form -->
+                <form action="{{ route('products.search') }}" method="GET" class="d-flex">
+                    <input type="text" 
+                           class="form-control form-control-sm me-2" 
+                           style="width: 250px;" 
+                           placeholder="Cari Elektronik"
+                           name="keyword"
+                           value="{{ request('keyword') }}"
+                           required>
+                    <button type="submit" class="btn btn-primary btn-sm d-none">Cari</button>
+                </form>
 
                 <!-- ICON USER -->
                 <i class="bi bi-person fs-4"></i>
@@ -150,5 +159,23 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('input[name="keyword"]');
+            
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        // Cari form parent dan submit
+                        const form = this.closest('form');
+                        if (form) {
+                            form.submit();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

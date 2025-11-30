@@ -3,7 +3,6 @@
 @section('content')
 
 <style>
-
 /* Menonaktifkan panah pada input number */
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button {
@@ -31,8 +30,24 @@ input[type=number] {
     /* Lebar form */
     max-width: 450px; 
 }
-</style>
 
+/* Style untuk preview gambar */
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+}
+
+.drive-help {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+</style>
 
 <div class="container mt-4">
     
@@ -44,10 +59,10 @@ input[type=number] {
 
         <div class="col-md-8">
             
-            <form class="form-produk-pendek" action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                
+            <form class="form-produk-pendek" action="{{ route('products.store') }}" method="POST">
+                @csrf
+
                 <div class="form-scrollable-wrapper hidden-scroll"> 
-                    @csrf
 
                     <div class="form-group mb-3">
                         <label for="category_id">Kategori</label>
@@ -88,7 +103,7 @@ input[type=number] {
 
                     <div class="form-group mb-3">
                         <label for="diskon">Diskon (%)</label>
-                        <input type="number" name="diskon" class="form-control" value="{{ old('diskon') }}">
+                        <input type="number" name="diskon" class="form-control" value="{{ old('diskon') }}" min="0" max="100">
                     </div>
 
                     <div class="form-group mb-3">
@@ -102,8 +117,26 @@ input[type=number] {
                     </div>
 
                     <div class="form-group mb-4">
-                        <label for="image">Gambar Produk</label>
-                        <input type="file" name="image" class="form-control">
+                        <label for="image_url">URL Gambar dari Google Drive</label>
+                        <input type="url" name="image_url" id="image_url" class="form-control" 
+                               value="{{ old('image_url') }}" 
+                               placeholder="https://lh3.googleusercontent.com/d/FILE_ID"
+                               onchange="previewImage(this.value)">
+                        
+                        <div class="drive-help">
+                            <small>
+                                Cara dapatkan URL: 
+                                <ol>
+                                    <li>Upload gambar ke Google Drive</li>
+                                    <li>Klik kanan file → "Dapatkan link"</li>
+                                    <li>Setel akses menjadi "Siapa saja dengan link"</li>
+                                    <li>Salin link dan tempel di sini</li>
+                                </ol>
+                            </small>
+                        </div>
+
+                        <!-- Preview Gambar -->
+                        <img id="image_preview" class="image-preview" alt="Preview Gambar">
                     </div>
                     
                     <div class="mb-3">
@@ -111,9 +144,49 @@ input[type=number] {
                         <a href="{{ route('products.index') }}" class="btn btn-primary">Kembali</a>
                     </div>
 
-                </div> </form>
+                </div>
+            </form>
         </div>
 
     </div>
 </div>
+
+<script>
+function previewImage(url) {
+    const preview = document.getElementById('image_preview');
+    
+    if (url) {
+        // Konversi URL Google Drive ke format direct link untuk preview
+        let directUrl = url;
+        
+        // Jika URL dalam format view
+        if (url.includes('/file/d/')) {
+            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (match) {
+                directUrl = "https://drive.google.com/uc?id=" + match[1];
+            }
+        }
+        // Jika URL dalam format open
+        else if (url.includes('id=')) {
+            const match = url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match) {
+                directUrl = "https://drive.google.com/uc?id=" + match[1];
+            }
+        }
+        
+        preview.src = directUrl;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Preview gambar saat halaman load jika ada value sebelumnya
+document.addEventListener('DOMContentLoaded', function() {
+    const initialUrl = document.getElementById('image_url').value;
+    if (initialUrl) {
+        previewImage(initialUrl);
+    }
+});
+</script>
 @endsection

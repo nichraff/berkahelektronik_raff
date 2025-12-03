@@ -1,60 +1,123 @@
 @extends('products.layout')
- 
+
 @section('content')
 
-<div class="card mt-5">
-  <h2 class="card-header">Laravel 11 CRUD Example from scratch - ItSolutionStuff.com</h2>
-  <div class="card-body">
-        
-        @session('session')
-            <div class="alert alert-success" role="alert"> {{ $value }} </div>
-        @endsession
+<h4 class="fw-bold mt-1 mb-3" style="font-size: 25px;">
+    Barang Berkah Elektronik
+</h4>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <a class="btn btn-success btn-sm" href="{{ route('products.create') }}"> <i class="fa fa-plus"></i> Create New Product</a>
-        </div>
+<div style="text-align: right; margin-bottom: 15px;">
+  <a class="btn btn-success" href="{{ route('products.create') }}" style="border-radius: 8px;">
+      <i class="fas fa-plus"></i> Tambah Produk
+  </a>
+</div>
 
-        <table class="table table-bordered table-striped mt-4">
-            <thead>
-                <tr>
-                    <th width="80px">No</th>
-                    <th>Name</th>
-                    <th>Details</th>
-                    <th width="250px">Action</th>
-                </tr>
-            </thead>
+@if ($message = Session::get('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{ $message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
 
-            <tbody>
-            @forelse ($products as $product)
-                <tr>
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->detail }}</td>
-                    <td>
-                        <form action="{{ route('products.destroy',$product->id) }}" method="POST">
-           
-                            <a class="btn btn-info btn-sm" href="{{ route('products.show',$product->id) }}"><i class="fa-solid fa-list"></i> Show</a>
-            
-                            <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-           
-                            @csrf
-                            @method('DELETE')
-              
-                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="4">There are no data.</td>
-                </tr>
-            @endforelse
-            </tbody>
+@if(isset($keyword) && $keyword)
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    Menampilkan hasil pencarian untuk: <strong>"{{ $keyword }}"</strong>
+    <a href="{{ route('products.index') }}" class="btn-close" aria-label="Close"></a>
+</div>
+@endif
 
-        </table>
-      
-        {!! $products->links() !!}
+@if($products->count() === 0 && isset($keyword) && $keyword)
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    ❌ Barang "<strong>{{ $keyword }}</strong>" tidak tersedia
+    <a href="{{ route('products.index') }}" class="btn-close" aria-label="Close"></a>
+</div>
+@endif
 
-  </div>
-</div>  
+<div class="hidden-scroll" style="height: calc(100vh - 250px); overflow-y: auto; padding-right: 15px;">
+<table class="table table-bordered product-table">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Kategori</th>
+            <th>Brand</th>
+            <th>Judul</th>
+            <th>Model</th>
+            <th>Stok</th>
+            <th>Harga</th>
+            <th>Diskon (%)</th>
+            <th>Harga Setelah Diskon</th>
+            <th>Garansi</th>
+            <th>Detail</th>
+            <th>Gambar</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @foreach ($products as $product)
+    <tr>
+        <td>{{ ++$i }}</td>
+
+        <td>{{ $product->category->name ?? 'N/A' }}</td>
+        <td>
+            @if(isset($keyword) && $keyword)
+                {!! highlightText($product->brand, $keyword) !!}
+            @else
+                {{ $product->brand }}
+            @endif
+        </td>
+        <td>
+            @if(isset($keyword) && $keyword)
+                {!! highlightText($product->judul, $keyword) !!}
+            @else
+                {{ $product->judul }}
+            @endif
+        </td>
+        <td>
+            @if(isset($keyword) && $keyword)
+                {!! highlightText($product->model, $keyword) !!}
+            @else
+                {{ $product->model }}
+            @endif
+        </td>
+
+        <td>{{ $product->stok }}</td>
+
+        <td>Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
+        <td>{{ $product->diskon }}%</td>
+
+        <td>Rp {{ number_format($product->harga_akhir, 0, ',', '.') }}</td>
+
+        <td>{{ $product->garansi }}</td>
+
+        <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            {{ $product->detail }}
+        </td>
+
+        <td>
+            @if($product->image)
+                <img src="{{ $product->image }}" width="90" style="border-radius:5px; height: 70px; object-fit: cover;" 
+                     alt="{{ $product->judul }}" title="{{ $product->judul }}">
+            @else
+                <span class="text-muted">No Image</span>
+            @endif
+        </td>
+
+        <td>
+            <form action="{{ route('products.destroy',$product->id) }}" method="POST">
+                <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}">Edit</a>
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus produk ini?')">Delete</button>
+            </form>
+        </td>
+    </tr>
+    @endforeach
+    </tbody>
+</table>
+
+{!! $products->links() !!}
+
+</div>
+
 @endsection

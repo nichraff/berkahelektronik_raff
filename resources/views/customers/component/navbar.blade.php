@@ -205,8 +205,8 @@
     }
 
     .main-content {
-        min-height: calc(100vh - 80px);
-        padding: 20px 40px;
+        margin-top: 80px;
+        padding: 0;
     }
 
     @media (max-width: 1200px) {

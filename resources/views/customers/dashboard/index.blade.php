@@ -14,12 +14,8 @@
         <section>
             <style>
                 .carousel-item{
-                    height: 30.5rem;
+                    height: 29rem;
                     background-position: center;
-                }
-
-                #bannerCarousel {
-                    margin-top: -490px;
                 }
             </style>
             <div id="bannerCarousel" class="carousel slide" data-ride="carousel">

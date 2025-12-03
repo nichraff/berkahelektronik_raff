@@ -57,15 +57,46 @@
                 </button>
             </div>
 
-            <h1>Rekomendasi</h1>
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+            <section class="container py-4">
+                <h2 class="text-center mb-4">Rekomendasi</h2>
+                <div class="row g-3">
+                    @forelse($products as $product)
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <a href="{{ route('products.show', $product->id) }}" class="text-decoration-none text-dark">
+                            <div class="card h-100 border-0">
+                                <div style="height: 180px; overflow: hidden; border-radius: 8px;">
+                                    <img src="{{ $product->image }}" 
+                                        class="card-img-top w-100 h-100" 
+                                        alt="{{ $product->judul }}"
+                                        style="object-fit: cover;"
+                                        onerror="this.src='https:via.placeholder.com/300x180?text=No+Image'">
+                                </div>
+                                <div class="card-body p-2">
+                                    <h6 class="card-title fw-bold mb-1" style="font-size: 0.9rem;">
+                                        {{ $product->judul }}
+                                    </h6>
+                                    <div>
+                                        @if($product->diskon > 0)
+                                            <span class="text-danger fw-bold">
+                                                Rp{{ number_format($product->harga_akhir, 0, ',', '.') }}
+                                            </span>
+                                            <br>
+                                            <small class="text-muted text-decoration-line-through">
+                                                Rp{{ number_format($product->harga, 0, ',', '.') }}
+                                            </small>
+                                        @else
+                                            <span class="text-primary fw-bold">
+                                                Rp{{ number_format($product->harga, 0, ',', '.') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    @endforelse
                 </div>
-            </div>
+            </section>
         </section>
     </body>
 </html>

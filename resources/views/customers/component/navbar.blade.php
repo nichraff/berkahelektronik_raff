@@ -316,7 +316,7 @@
 
 <nav class="navbar-main">
     <div class="navbar-container">
-        <a href="#" class="navbar-brand">
+        <a href="{{ route('beranda') }}" class="navbar-brand">
             TOKO BERKAH<br>ELEKTRONIK
         </a>
         <div class="navbar-center-group">

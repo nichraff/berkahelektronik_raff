@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
@@ -10,6 +11,7 @@ Route::get('/beranda', function () {
 Route::get('/detail', function () {
     return view('customers.dashboard.detail');
 })->name('detail');
+
 Route::get('/', function () {
     return redirect('/products');
 });
@@ -22,3 +24,5 @@ Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name
 Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 Route::resource('products', ProductController::class);
+
+Route::get('/beranda', [HomeController::class, 'index']);

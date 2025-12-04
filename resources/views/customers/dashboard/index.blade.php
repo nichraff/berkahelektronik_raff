@@ -58,7 +58,7 @@
             </div>
 
             <section class="container py-4">
-                <h2 class="text-center mb-4">Rekomendasi</h2>
+                <h2 class="text-left mb-1"><b>Rekomendasi</b></h2>
                 <div class="row g-3">
                     @forelse($products as $product)
                     <div class="col-lg-3 col-md-4 col-sm-6">
@@ -92,6 +92,14 @@
                                     </div>
                                 </div>
                             </div>
+                        </a>
+                    </div>
+                    @empty
+                    <!-- Jika belum ada produk di database -->
+                    <div class="col-12 text-center">
+                        <p class="text-muted">Belum ada produk di database</p>
+                        <a href="{{ route('products.create') }}" class="btn btn-sm btn-primary">
+                            Tambah Produk Pertama
                         </a>
                     </div>
                     @endforelse

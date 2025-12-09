@@ -318,7 +318,7 @@
 
             <!-- REKOMENDASI SECTION - UKURAN COMPACT -->
             <section class="container py-3">
-                <h2 class="text-left mb-3" style="font-size: 1.4rem;"><b>Rekomendasi</b></h2>
+                <h2 class="text-left mb-3" style="font-size: 1.4rem;"><b>Daftar Produk</b></h2>
                 
                 <div class="row row-compact">
                     @forelse($products as $product)

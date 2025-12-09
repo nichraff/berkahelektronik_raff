@@ -26,3 +26,8 @@ Route::delete('/products/{product}', [ProductController::class, 'destroy'])->nam
 Route::resource('products', ProductController::class);
 
 Route::get('/beranda', [HomeController::class, 'index']);
+
+Route::get('/customer/login', function () {
+    return view('customers.login'); // kalau belum ada, buat nanti
+})->name('customer.login');
+

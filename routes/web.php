@@ -13,7 +13,7 @@ Route::get('/detail', function () {
 })->name('detail');
 
 Route::get('/', function () {
-    return redirect('/products');
+    return redirect('/beranda');
 });
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');

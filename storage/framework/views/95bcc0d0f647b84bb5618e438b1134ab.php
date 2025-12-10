@@ -313,11 +313,11 @@
         }
     }
 </style>
-@stack('styles')
+<?php echo $__env->yieldPushContent('styles'); ?>
 
 <nav class="navbar-main">
     <div class="navbar-container">
-        <a href="{{ route('beranda') }}" class="navbar-brand">
+        <a href="<?php echo e(route('beranda')); ?>" class="navbar-brand">
             TOKO BERKAH<br>ELEKTRONIK
         </a>
         <div class="navbar-center-group">
@@ -349,7 +349,7 @@
             </div>
             <div class="search-container">
                 <form id="searchForm" method="GET" action="#">
-                    <input type="text" class="search-box" name="q" placeholder="Cari Elektronik..." value="{{ request('q') ?? '' }}" autocomplete="off">
+                    <input type="text" class="search-box" name="q" placeholder="Cari Elektronik..." value="<?php echo e(request('q') ?? ''); ?>" autocomplete="off">
                     <div class="search-icon" onclick="document.getElementById('searchForm').submit()">
                         <i class="bi bi-search"></i>
                     </div>
@@ -364,15 +364,15 @@
 
         <div class="auth-buttons">
             <!-- Tombol Masuk mengarah ke halaman login (views/auth/login.blade.php) -->
-            <a href="{{ route('login') }}" class="login-btn">Masuk</a>
+            <a href="<?php echo e(route('login')); ?>" class="login-btn">Masuk</a>
             <!-- Tombol Daftar mengarah ke halaman registrasi (views/auth/register.blade.php) -->
-            <a href="{{ route('register') }}" class="register-btn">Daftar</a>
+            <a href="<?php echo e(route('register')); ?>" class="register-btn">Daftar</a>
         </div>
     </div>
 </nav>
 
 <main class="main-content">
-    @yield('content')
+    <?php echo $__env->yieldContent('content'); ?>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -420,4 +420,4 @@
         }
     });
 </script>
-@stack('scripts')
+<?php echo $__env->yieldPushContent('scripts'); ?><?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/products/navbar.blade.php ENDPATH**/ ?>

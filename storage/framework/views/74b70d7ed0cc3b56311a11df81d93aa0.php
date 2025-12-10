@@ -1,4 +1,4 @@
-@include('customers.component.navbar')
+<?php echo $__env->make('customers.component.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <style>
     .product-detail-container {
@@ -101,48 +101,49 @@
 
 <div class="product-detail-container">
 
-    {{-- LEFT IMAGE --}}
+    
     <div class="product-image-box">
-        @if($product->image_url)
-            <img src="{{ $product->image_url }}" 
-                 alt="{{ $product->judul }}"
+        <?php if($product->image_url): ?>
+            <img src="<?php echo e($product->image_url); ?>" 
+                 alt="<?php echo e($product->judul); ?>"
                  onerror="this.onerror=null; this.src='https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image';">
-        @else
+        <?php else: ?>
             <img src="https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image"
                  alt="No Image">
-        @endif
+        <?php endif; ?>
     </div>
 
-    {{-- MIDDLE CONTENT --}}
+    
     <div class="product-info-box">
-        <h2 style="font-weight: bold;">{{ $product->judul }}</h2>
+        <h2 style="font-weight: bold;"><?php echo e($product->judul); ?></h2>
 
-        <p style="color: #666;">Tersedia: {{ $product->stok }}</p>
+        <p style="color: #666;">Tersedia: <?php echo e($product->stok); ?></p>
 
         <div style="margin: 10px 0;">
-            @php
+            <?php
                 $hargaAkhir = $product->harga - ($product->harga * $product->diskon / 100);
-            @endphp
+            ?>
 
             <span class="price-current">
-                Rp{{ number_format($hargaAkhir, 0, ',', '.') }}
+                Rp<?php echo e(number_format($hargaAkhir, 0, ',', '.')); ?>
+
             </span>
 
-            @if($product->diskon > 0)
-                <span class="discount-badge">{{ $product->diskon }}%</span>
+            <?php if($product->diskon > 0): ?>
+                <span class="discount-badge"><?php echo e($product->diskon); ?>%</span>
                 <br>
-                <span class="price-old">Rp{{ number_format($product->harga, 0, ',', '.') }}</span>
-            @endif
+                <span class="price-old">Rp<?php echo e(number_format($product->harga, 0, ',', '.')); ?></span>
+            <?php endif; ?>
         </div>
 
         <h4 style="margin-top: 25px;">Detail Produk</h4>
-        <p><strong>Merek:</strong> {{ $product->brand }}</p>
-        <p><strong>Model:</strong> {{ $product->model }}</p>
-        <p><strong>Garansi:</strong> {{ $product->garansi }}</p>
-        <p><strong>Deskripsi:</strong><br> {{ $product->detail }}</p>
+        <p><strong>Merek:</strong> <?php echo e($product->brand); ?></p>
+        <p><strong>Model:</strong> <?php echo e($product->model); ?></p>
+        <p><strong>Garansi:</strong> <?php echo e($product->garansi); ?></p>
+        <p><strong>Deskripsi:</strong><br> <?php echo e($product->detail); ?></p>
     </div>
 
-    {{-- RIGHT BOX --}}
+    
     <div class="side-box">
 
         <p style="font-size: 15px; font-weight: bold;">Atur jumlah dan catatan</p>
@@ -151,27 +152,28 @@
             <button class="qty-btn" onclick="decreaseQty()">−</button>
             <span id="qty">1</span>
             <button class="qty-btn" onclick="increaseQty()">+</button>
-            <span style="margin-left: 10px; color: #666;">Stok: {{ $product->stok }}</span>
+            <span style="margin-left: 10px; color: #666;">Stok: <?php echo e($product->stok); ?></span>
         </div>
 
         <p style="margin-top: 10px; color:#666; font-size: 14px;">Subtotal</p>
 
         <p class="price-current" id="subtotal">
-            Rp{{ number_format($hargaAkhir, 0, ',', '.') }}
+            Rp<?php echo e(number_format($hargaAkhir, 0, ',', '.')); ?>
+
         </p>
 
-        {{-- GUEST (BELUM LOGIN) --}}
-        @guest
-            <a href="{{ route('login') }}">
+        
+        <?php if(auth()->guard()->guest()): ?>
+            <a href="<?php echo e(route('login')); ?>">
                 <button class="buy-button">Beli Langsung</button>
             </a>
-            <a href="{{ route('login') }}">
+            <a href="<?php echo e(route('login')); ?>">
                 <button class="cart-button">+ Keranjang</button>
             </a>
-        @endguest
+        <?php endif; ?>
 
-        {{-- SUDAH LOGIN --}}
-        @auth
+        
+        <?php if(auth()->guard()->check()): ?>
             <a href="#">
                 <button class="buy-button">Beli Langsung</button>
             </a>
@@ -179,7 +181,7 @@
             <a href="#">
                 <button class="cart-button">+ Keranjang</button>
             </a>
-        @endauth
+        <?php endif; ?>
 
     </div>
 
@@ -212,3 +214,4 @@
             "Rp" + (qty * price).toLocaleString("id-ID");
     }
 </script>
+<?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/customers/dashboard/detail.blade.php ENDPATH**/ ?>

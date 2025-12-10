@@ -32,96 +32,81 @@ class AuthController extends Controller
      * Handle login request.
      */
     public function postLogin(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        // Cek apakah email terdaftar
-        $user = User::where('email', $request->email)->first();
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
         
-        if (!$user) {
-            return redirect()->route('login')
-                ->with('error', 'Akun belum terdaftar') // PERBAIKAN: tambahkan key 'error'
-                ->withInput($request->only('email'));
+        $user = Auth::user();
+        
+        if ($user->role === 'admin') {
+            // Admin -> dashboard admin
+            return redirect()->route('admin.dashboard');
+        } else {
+            // User biasa -> dashboard pembeli
+            return redirect()->route('user.dashboard');
         }
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            return redirect()->route('admin.dashboard')
-                             ->with('success', 'Anda berhasil masuk!'); // PERBAIKAN: tambahkan key 'success'
-        }
-
-        return redirect()->route('login')
-                         ->with('error', 'Password salah') // PERBAIKAN: tambahkan key 'error'
-                         ->withInput($request->only('email'));
     }
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah.',
+    ]);
+}
 
 
     /**
      * Handle registration request.
      */
     public function postRegistration(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:6',
+        'password_confirmation' => 'required|same:password',
+    ]);
 
-        $user = $this->create($request->all());
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => 'user',
+    ]);
 
-        Auth::login($user);
+    Auth::login($user);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Great! You have successfully registered.');
-    }
-
-    /**
-     * Dashboard page.
-     */
-    public function dashboard()
-    {
-        if (Auth::check()) {
-            return view('dashboard');
-        }
-
-        return redirect()->route('login')->with('error', 'Oops! You do not have access.');
-    }
-
-
-    /**
-     * Create new user.
-     */
-    protected function create(array $data): User
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-    }
+    // Registrasi selalu user, arahkan ke beranda
+    return redirect()->route('beranda')
+                    ->with('success', 'Registrasi berhasil! Selamat datang di Toko Berkah Elektronik.');
+}
 
     /**
      * Logout user.
      */
-    public function logout(): RedirectResponse
-    {
-        Session::flush();
-        Auth::logout();
+    public function logout(Request $request)
+{
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'You have logged out successfully.');
-    }
+    return redirect()->route('beranda')->with('success', 'Berhasil logout');
+}
+
 
     // HALAMAN RESET PASSWORD LANGSUNG
-    public function resetPassword()
+    public function resetPassword(): View
     {
         return view('auth.reset-password');
     }
 
     // UPDATE PASSWORD TANPA TOKEN / EMAIL LINK
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request): RedirectResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -138,7 +123,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return redirect('/login')->with('success', 'Password berhasil direset!');
+        return redirect('/login')->with('success', 'Password berhasil direset! Silakan login dengan password baru.');
     }
 
     public function checkAccount(Request $request)
@@ -153,5 +138,4 @@ class AuthController extends Controller
             'exists' => $userExists
         ]);
     }
-
 }

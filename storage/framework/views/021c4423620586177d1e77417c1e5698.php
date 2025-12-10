@@ -10,22 +10,22 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
   <!-- Optional: CSS tambahan untuk dashboard -->
-  <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+  <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.css')); ?>">
 </head>
 <body>
 
   <!-- INCLUDE NAVBAR -->
-  @include('customers.dashboard.navbar')
+  <?php echo $__env->make('customers.dashboard.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
   <!-- DASHBOARD CONTENT -->
   <div class="dashboard-container d-flex">
 
     <!-- SIDEBAR -->
     <div class="sidebar bg-white p-3 shadow-sm">
-      <a href="{{ route('admin.dashboard') }}" class="menu-item active d-flex align-items-center gap-2 mb-2">
+      <a href="<?php echo e(route('admin.dashboard')); ?>" class="menu-item active d-flex align-items-center gap-2 mb-2">
         <span class="menu-icon">📊</span> Dashboard
       </a>
-      <a href="{{ route('products.index') }}" class="menu-item d-flex align-items-center gap-2 mb-2">
+      <a href="<?php echo e(route('products.index')); ?>" class="menu-item d-flex align-items-center gap-2 mb-2">
         <span class="menu-icon">📦</span> Barang
       </a>
       <a href="#" class="menu-item d-flex align-items-center gap-2 mb-2">
@@ -45,8 +45,8 @@
         <span class="menu-icon">🚪</span> Logout
       </a>
 
-      <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-        @csrf
+      <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="d-none">
+        <?php echo csrf_field(); ?>
       </form>
     </div>
 
@@ -54,7 +54,7 @@
     <div class="main-content flex-fill p-3">
       <div class="card mb-3">
         <div class="card-body">
-          <h1 class="display-6 fw-bold">Hi, {{ auth()->user()->name }}</h1>
+          <h1 class="display-6 fw-bold">Hi, <?php echo e(auth()->user()->name); ?></h1>
           <p class="lead">
             Selamat datang di dashboard Toko Berkah Elektronik.<br>
             Kelola toko Anda dengan mudah dari sini.
@@ -121,3 +121,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+<?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/dashboard.blade.php ENDPATH**/ ?>

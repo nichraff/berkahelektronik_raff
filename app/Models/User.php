@@ -14,7 +14,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // tambahkan ini
+        'role',
     ];
 
     protected $hidden = [
@@ -44,5 +44,21 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+    
+    /**
+     * Scope untuk admin
+     */
+    public function scopeAdmin($query)
+    {
+        return $query->where('role', 'admin');
+    }
+    
+    /**
+     * Scope untuk user
+     */
+    public function scopeUser($query)
+    {
+        return $query->where('role', 'user');
     }
 }

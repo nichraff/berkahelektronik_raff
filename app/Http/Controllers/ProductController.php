@@ -10,6 +10,21 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        // Cek admin untuk semua method kecuali show
+        $this->middleware(function ($request, $next) {
+            // Cek apakah sedang mengakses route admin/products/*
+            if (request()->is('admin/products*')) {
+                if (!auth()->check() || auth()->user()->role !== 'admin') {
+                    return redirect()->route('user.dashboard')
+                        ->with('error', 'Hanya admin yang bisa mengakses halaman produk');
+                }
+            }
+            return $next($request);
+        })->except(['show']);
+    }
+
     public function show(Product $product)
     {
         return view('customers.dashboard.detail', compact('product'));
@@ -20,20 +35,15 @@ class ProductController extends Controller
     // ===================================================
     public function index(Request $request): View
     {
-        // 1. Ambil keyword dari request. Menggunakan 'keyword' sesuai dengan nama input di form Navbar.
         $keyword = $request->input('keyword'); 
 
-        // 2. Query produk + filter judul jika ada pencarian
         $products = Product::when($keyword, function ($query, $keyword) {
-            // Menggunakan LIKE dengan wildcard (%) untuk pencarian yang fleksibel di kolom 'judul'
             return $query->where('judul', 'like', '%' . $keyword . '%');
         })
         ->latest()
-        // 3. Penting: Tambahkan withQueryString() agar link pagination membawa keyword pencarian
         ->paginate(20)
         ->withQueryString(); 
 
-        // 4. Mengirim keyword (opsional, tapi baik untuk menampilkan status pencarian)
         return view('products.index', compact('products', 'keyword')) 
             ->with('i', (request()->input('page', 1) - 1) * 20);
     }
@@ -82,13 +92,11 @@ class ProductController extends Controller
             'diskon'   => 'nullable|integer|min:0|max:100',
             'garansi'  => 'nullable|max:255',
             'detail'   => 'required',
-            'image_url' => 'required|url|max:500', // Validasi URL gambar dari Drive
+            'image_url' => 'required|url|max:500',
         ]);
 
-        // Konversi URL Google Drive ke format yang bisa di-embed
         $imageUrl = $this->convertDriveUrl($request->image_url);
 
-        // Simpan data - PASTIKAN SEMUA FIELD ADA
         $data = [
             'kategori' => $request->kategori,
             'brand'    => $request->brand,
@@ -99,7 +107,7 @@ class ProductController extends Controller
             'diskon'   => $request->diskon ?? 0,
             'garansi'  => $request->garansi,
             'detail'   => $request->detail,
-            'image_url' => $imageUrl, // ← DIUBAH dari 'image' menjadi 'image_url'
+            'image_url' => $imageUrl,
         ];
 
         Product::create($data);
@@ -132,24 +140,19 @@ class ProductController extends Controller
             'diskon'   => 'nullable|integer|min:0|max:100',
             'garansi'  => 'nullable|max:255',
             'detail'   => 'required',
-            'image_url' => 'nullable|url|max:500', // Validasi URL gambar dari Drive
+            'image_url' => 'nullable|url|max:500',
         ]);
 
-        // Data kecuali image_url & stok tambahan
         $data = $request->except(['image_url', 'tambah_stok']);
 
-        // Update stok
         $data['stok'] = $product->stok + ($request->tambah_stok ?? 0);
 
-        // Update gambar jika ada URL baru
         if ($request->has('image_url') && !empty($request->image_url)) {
-            $data['image_url'] = $this->convertDriveUrl($request->image_url); // ← DIUBAH dari 'image' menjadi 'image_url'
+            $data['image_url'] = $this->convertDriveUrl($request->image_url);
         }
 
-        // Default diskon
         $data['diskon'] = $request->diskon ?? 0;
 
-        // Update data
         $product->update($data);
 
         return redirect()->route('products.index')
@@ -161,7 +164,6 @@ class ProductController extends Controller
     // ===================================================
     public function destroy(Product $product): RedirectResponse
     {
-        // Hapus data di database (tidak perlu hapus file karena menggunakan URL Drive)
         $product->delete();
         return redirect()->route('products.index')
             ->with('success', 'Produk berhasil dihapus.');
@@ -172,38 +174,30 @@ class ProductController extends Controller
     // ===================================================
     private function convertDriveUrl($url)
     {
-        // Jika URL kosong, return kosong
         if (empty($url)) {
             return $url;
         }
 
-        // Jika sudah format googleusercontent, keep as is
         if (str_contains($url, 'googleusercontent.com')) {
             return $url;
         }
 
-        // Extract file ID dari berbagai format
         $fileId = null;
         
-        // Format 1: https://drive.google.com/file/d/FILE_ID/view
         if (preg_match('/\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
             $fileId = $matches[1];
         }
-        // Format 2: https://drive.google.com/uc?id=FILE_ID
         elseif (preg_match('/[?&]id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
             $fileId = $matches[1];
         }
-        // Format 3: https://drive.google.com/open?id=FILE_ID
         elseif (preg_match('/open\?id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
             $fileId = $matches[1];
         }
 
-        // Jika dapat file ID, konversi ke googleusercontent
         if ($fileId) {
             return "https://lh3.googleusercontent.com/d/" . $fileId;
         }
 
-        // Jika tidak match, return URL asli
         return $url;
     }
 }

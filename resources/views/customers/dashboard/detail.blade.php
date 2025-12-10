@@ -103,11 +103,13 @@
 
     {{-- LEFT IMAGE --}}
     <div class="product-image-box">
-        @if($product->image)
-            {{-- langsung tampilkan URL (Drive usercontent atau url apa pun) --}}
-            <img src="{{ $product->image }}" alt="{{ $product->judul }}">
+        @if($product->image_url)
+            <img src="{{ $product->image_url }}" 
+                 alt="{{ $product->judul }}"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image';">
         @else
-            <p>Tidak ada gambar.</p>
+            <img src="https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image"
+                 alt="No Image">
         @endif
     </div>
 
@@ -159,22 +161,22 @@
         </p>
 
         {{-- GUEST (BELUM LOGIN) --}}
-        @guest('customer')
-            <a href="{{ route('customer.login') }}">
+        @guest
+            <a href="{{ route('login') }}">
                 <button class="buy-button">Beli Langsung</button>
             </a>
-            <a href="{{ route('customer.login') }}">
+            <a href="{{ route('login') }}">
                 <button class="cart-button">+ Keranjang</button>
             </a>
         @endguest
 
         {{-- SUDAH LOGIN --}}
-        @auth('customer')
-            <a href="{{ route('checkout', $product->id) }}">
+        @auth
+            <a href="#">
                 <button class="buy-button">Beli Langsung</button>
             </a>
 
-            <a href="{{ route('cart.add', $product->id) }}">
+            <a href="#">
                 <button class="cart-button">+ Keranjang</button>
             </a>
         @endauth
@@ -184,19 +186,25 @@
 </div>
 
 <script>
+    const data = document.getElementById('product-data');
     let qty = 1;
-    let price = {{ $hargaAkhir }};
+    let price = Number(data.dataset.price);
+    let maxStock = Number(data.dataset.stock);
 
     function increaseQty() {
-        qty++;
-        document.getElementById("qty").textContent = qty;
-        updateSubtotal();
+        if (qty < maxStock) {
+            qty++;
+            document.getElementById("qty").textContent = qty;
+            updateSubtotal();
+        }
     }
 
     function decreaseQty() {
-        if (qty > 1) qty--;
-        document.getElementById("qty").textContent = qty;
-        updateSubtotal();
+        if (qty > 1) {
+            qty--;
+            document.getElementById("qty").textContent = qty;
+            updateSubtotal();
+        }
     }
 
     function updateSubtotal() {

@@ -1,35 +1,18 @@
 @extends('products.layout')
-
+ 
 @section('content')
 
 <h4 class="fw-bold mt-1 mb-3" style="font-size: 25px;">
     Barang Berkah Elektronik
 </h4>
-
 <div style="text-align: right; margin-bottom: 15px;">
-  <a class="btn btn-success" href="{{ route('products.create') }}" style="border-radius: 8px;">
-      <i class="fas fa-plus"></i> Tambah Produk
-  </a>
+  <a class="btn btn-success" href="{{ route('products.create') }}">Tambah Produk</a>
 </div>
 
 @if ($message = Session::get('success'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
+<div class="alert alert-success alert-block">
+    <button type="button" class="close" data-dismiss="alert">×</button>    
     <strong>{{ $message }}</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-@endif
-
-@if(isset($keyword) && $keyword)
-<div class="alert alert-info alert-dismissible fade show" role="alert">
-    Menampilkan hasil pencarian untuk: <strong>"{{ $keyword }}"</strong>
-    <a href="{{ route('products.index') }}" class="btn-close" aria-label="Close"></a>
-</div>
-@endif
-
-@if($products->count() === 0 && isset($keyword) && $keyword)
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    ❌ Barang "<strong>{{ $keyword }}</strong>" tidak tersedia
-    <a href="{{ route('products.index') }}" class="btn-close" aria-label="Close"></a>
 </div>
 @endif
 
@@ -52,63 +35,43 @@
             <th>Action</th>
         </tr>
     </thead>
-
+    
     <tbody>
     @foreach ($products as $product)
     <tr>
         <td>{{ ++$i }}</td>
-
         <td>{{ $product->category->name ?? 'N/A' }}</td>
-        <td>
-            @if(isset($keyword) && $keyword)
-                {!! highlightText($product->brand, $keyword) !!}
-            @else
-                {{ $product->brand }}
-            @endif
-        </td>
-        <td>
-            @if(isset($keyword) && $keyword)
-                {!! highlightText($product->judul, $keyword) !!}
-            @else
-                {{ $product->judul }}
-            @endif
-        </td>
-        <td>
-            @if(isset($keyword) && $keyword)
-                {!! highlightText($product->model, $keyword) !!}
-            @else
-                {{ $product->model }}
-            @endif
-        </td>
-
+        <td>{{ $product->brand }}</td>
+        <td>{{ $product->judul }}</td>
+        <td>{{ $product->model }}</td>
         <td>{{ $product->stok }}</td>
-
         <td>Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
         <td>{{ $product->diskon }}%</td>
-
         <td>Rp {{ number_format($product->harga_akhir, 0, ',', '.') }}</td>
-
         <td>{{ $product->garansi }}</td>
-
-        <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
             {{ $product->detail }}
         </td>
-
+        
+        {{-- PERBAIKAN GAMBAR --}}
         <td>
-            @if($product->image)
-                <img src="{{ $product->image }}" width="90" style="border-radius:5px; height: 70px; object-fit: cover;" 
-                     alt="{{ $product->judul }}" title="{{ $product->judul }}">
+            @if($product->image_url)
+                <img src="{{ $product->image_url }}" 
+                     class="product-image"
+                     style="max-width: 100px; max-height: 100px; border-radius: 5px; border: 1px solid #ddd; padding: 2px;"
+                     alt="{{ $product->judul }}"
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<small class=\'text-muted\'>Image Error</small>';">
             @else
                 <span class="text-muted">No Image</span>
             @endif
         </td>
-
+        
         <td>
-            <form action="{{ route('products.destroy',$product->id) }}" method="POST">
+            <form action="{{ route('products.destroy',$product->id) }}" method="POST" style="display: inline-block;">
                 <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}">Edit</a>
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus produk ini?')">Delete</button>
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus produk?')">Delete</button>
             </form>
         </td>
     </tr>
@@ -117,7 +80,19 @@
 </table>
 
 {!! $products->links() !!}
+</div>  
 
-</div>
+<style>
+.product-table {
+    font-size: 14px;
+}
+.product-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+.product-table td {
+    vertical-align: middle;
+}
+</style>
 
 @endsection

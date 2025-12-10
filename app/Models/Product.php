@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,31 +19,21 @@ class Product extends Model
         'diskon',   
         'garansi', 
         'detail', 
-        'image' 
+        'image_url'  // ← DIUBAH dari 'image' menjadi 'image_url'
     ];
     
-    // Accessor untuk URL gambar lengkap 
-    public function getImageUrlAttribute()
-    {
-        if ($this->image) {
-            return asset('storage/' . $this->image);
-        }
-        return null;
-    }
-    
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'kategori'); 
-    }
-
+    // Accessor untuk harga akhir
     public function getHargaAkhirAttribute()
     {
-        $harga = $this->attributes['harga'];
-        $diskon = $this->attributes['diskon'] ?? 0; 
-
-        $harga_akhir = $harga - ($harga * $diskon / 100);
-
-        return $harga_akhir;
+        $harga = $this->harga;
+        $diskon = $this->diskon ?? 0;
+        return $harga - ($harga * $diskon / 100);
+    }
+    
+    // Relationship dengan Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'kategori', 'id');
     }
 
     // Scope untuk mendapatkan produk terbaru

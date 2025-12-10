@@ -1,5 +1,5 @@
 @extends('products.layout')
-
+  
 @section('content')
 
 <style>
@@ -61,6 +61,22 @@ input[type=number] {
             
             <form class="form-produk-pendek" action="{{ route('products.store') }}" method="POST">
                 @csrf
+                
+                @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading mb-2">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Ada kesalahan dalam pengisian form
+                    </h5>
+                    <ul class="mb-0 ps-3">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+                
+                <div class="form-scrollable-wrapper hidden-scroll">
 
                 <div class="form-scrollable-wrapper hidden-scroll"> 
 
@@ -147,46 +163,6 @@ input[type=number] {
                 </div>
             </form>
         </div>
-
     </div>
 </div>
-
-<script>
-function previewImage(url) {
-    const preview = document.getElementById('image_preview');
-    
-    if (url) {
-        // Konversi URL Google Drive ke format direct link untuk preview
-        let directUrl = url;
-        
-        // Jika URL dalam format view
-        if (url.includes('/file/d/')) {
-            const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-            if (match) {
-                directUrl = "https://drive.google.com/uc?id=" + match[1];
-            }
-        }
-        // Jika URL dalam format open
-        else if (url.includes('id=')) {
-            const match = url.match(/id=([a-zA-Z0-9_-]+)/);
-            if (match) {
-                directUrl = "https://drive.google.com/uc?id=" + match[1];
-            }
-        }
-        
-        preview.src = directUrl;
-        preview.style.display = 'block';
-    } else {
-        preview.style.display = 'none';
-    }
-}
-
-// Preview gambar saat halaman load jika ada value sebelumnya
-document.addEventListener('DOMContentLoaded', function() {
-    const initialUrl = document.getElementById('image_url').value;
-    if (initialUrl) {
-        previewImage(initialUrl);
-    }
-});
-</script>
 @endsection

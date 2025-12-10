@@ -3,50 +3,44 @@
 @section('title', 'Toko Berkah Elektronik - Reset Password')
 
 @section('content')
-<section class="reset-section container mt-5 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 mb-4">
-      <div class="reset-text">
-        <h2 class="fw-bold">Lupa kata sandi?</h2>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="reset-form">
-        @if(session('error'))
-          <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-
-        @if(session('success'))
-          <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        <form method="POST" action="{{ url('/reset-password') }}">
-          @csrf
-
-          {{-- Email --}}
-          <div class="mb-3">
-            <label class="form-label">Email terdaftar <span class="text-danger">*</span></label>
-            <input type="email" name="email" class="form-control" required placeholder="email@example.com">
-          </div>
-
-          {{-- Password baru --}}
-          <div class="mb-3">
-            <label class="form-label">Password Baru <span class="text-danger">*</span></label>
-            <input type="password" name="password" class="form-control" required placeholder="Password baru">
-          </div>
-
-          {{-- Konfirmasi --}}
-          <div class="mb-3">
-            <label class="form-label">Konfirmasi Password <span class="text-danger">*</span></label>
-            <input type="password" name="password_confirmation" class="form-control" required placeholder="Ulangi password">
-          </div>
-
-          {{-- Tombol --}}
-          <div class="d-grid">
-            <button type="submit" class="btn btn-reset" style="background-color: #2948ff; color: #fff; font-weight: 600; border-radius: 50px; height: 48px;">Reset Password</button>
-          </div>
-        </form>
+<section class="reset-section container d-flex align-items-center" style="min-height: 80vh;">
+  <div class="row w-100 justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="d-flex align-items-center justify-content-between">
+        {{-- Teks di kiri --}}
+        <div class="me-5" style="flex: 1;">
+          <h2 class="fw-bold" style="font-size: 35px; color: #333;">Lupa kata sandi?</h2>
+        </div>
+        
+        {{-- Form di kanan --}}
+        <div style="flex: 1;">
+          <form method="POST" action="{{ url('/reset-password') }}">
+            @csrf
+            
+            {{-- Email --}}
+            <div class="mb-3">
+              <p class="mb-2" style="font-size: 14px; color: #333;">Masukan email terdaftar</p>
+              <input type="email" name="email" class="form-control" required placeholder="contoh@gmail.com">
+            </div>
+            
+            {{-- Password Baru --}}
+            <div class="mb-3">
+              <p class="mb-2" style="font-size: 14px; color: #333;">Masukan kata sandi yang baru</p>
+              <input type="password" name="password" class="form-control" required placeholder="Kata sandi">
+            </div>
+            
+            {{-- Konfirmasi Password --}}
+            <div class="mb-4">
+              <p class="mb-2" style="font-size: 14px; color: #333;">Masukan ulang kata sandi</p>
+              <input type="password" name="password_confirmation" class="form-control" required placeholder="Kata sandi">
+            </div>
+            
+            {{-- Tombol --}}
+            <div class="d-grid">
+              <button type="submit" class="btn" style="background-color: #2948ff; color: #fff; font-weight: 600; border-radius: 8px; padding: 12px; font-size: 16px;">Lanjutkan</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

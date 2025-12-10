@@ -32,23 +32,32 @@ class AuthController extends Controller
      * Handle login request.
      */
     public function postLogin(Request $request): RedirectResponse
-{
-    $request->validate([
-        'email' => 'required|email', // Hanya email, tanpa nomor HP
-        'password' => 'required',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $credentials = $request->only('email', 'password');
+        // Cek apakah email terdaftar
+        $user = User::where('email', $request->email)->first();
+        
+        if (!$user) {
+            return redirect()->route('login')
+                ->with('error', 'Akun belum terdaftar') // PERBAIKAN: tambahkan key 'error'
+                ->withInput($request->only('email'));
+        }
 
-    if (Auth::attempt($credentials)) {
-        return redirect()->route('admin.dashboard')
-                         ->with('success', 'You have successfully logged in!');
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return redirect()->route('admin.dashboard')
+                             ->with('success', 'Anda berhasil masuk!'); // PERBAIKAN: tambahkan key 'success'
+        }
+
+        return redirect()->route('login')
+                         ->with('error', 'Password salah') // PERBAIKAN: tambahkan key 'error'
+                         ->withInput($request->only('email'));
     }
-
-    return redirect()->route('login')
-                     ->with('error', 'Email atau password salah');
-}
-
 
 
     /**
@@ -73,13 +82,13 @@ class AuthController extends Controller
      * Dashboard page.
      */
     public function dashboard()
-{
-    if (Auth::check()) {
-        return view('dashboard');
-    }
+    {
+        if (Auth::check()) {
+            return view('dashboard');
+        }
 
-    return redirect()->route('login')->with('error', 'Oops! You do not have access.');
-}
+        return redirect()->route('login')->with('error', 'Oops! You do not have access.');
+    }
 
 
     /**
@@ -130,6 +139,19 @@ class AuthController extends Controller
         ]);
 
         return redirect('/login')->with('success', 'Password berhasil direset!');
+    }
+
+    public function checkAccount(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $userExists = User::where('email', $request->email)->exists();
+        
+        return response()->json([
+            'exists' => $userExists
+        ]);
     }
 
 }

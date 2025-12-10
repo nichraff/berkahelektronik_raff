@@ -349,9 +349,9 @@
                                     @endif
                                 @endif
                                 
-                                <!-- GAMBAR PRODUK -->
+                                <!-- GAMBAR PRODUK - DIUBAH dari $product->image menjadi $product->image_url -->
                                 <div class="product-image-compact">
-                                    <img src="{{ $product->image }}" 
+                                    <img src="{{ $product->image_url }}" 
                                         class="product-img-compact" 
                                         alt="{{ $product->judul }}"
                                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300x140/6b7280/ffffff?text=No+Image'">

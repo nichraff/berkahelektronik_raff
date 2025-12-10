@@ -69,7 +69,23 @@ input[type=number] {
             
             <form class="form-produk-pendek" action="{{ route('products.update', $product->id) }}" method="POST">
                 @csrf
-                @method('PUT') 
+                @method('PUT')
+                
+                {{-- === VALIDATION ERRORS === --}}
+                @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h5 class="alert-heading mb-2">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Ada kesalahan dalam pengisian form
+                    </h5>
+                    <ul class="mb-0 ps-3">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+                {{-- === END VALIDATION ERRORS === --}}
                 
                 <div class="form-scrollable-wrapper hidden-scroll"> 
 
@@ -86,10 +102,11 @@ input[type=number] {
                         </select>
                     </div>
 
-        <div class="col-md-12 mb-3">
-            <label for="detail" class="form-label"><strong>Detail:</strong></label>
-            <textarea name="detail" id="detail" class="form-control" style="height:150px" placeholder="Enter product detail">{{ old('detail', $product->detail) }}</textarea>
-        </div>
+                    <div class="form-group mb-3">
+                        <label for="brand">Brand</label>
+                        <input type="text" name="brand" class="form-control" placeholder="Masukkan Brand" 
+                                value="{{ old('brand', $product->brand) }}">
+                    </div>
 
                     <div class="form-group mb-3">
                         <label for="judul">Judul Produk</label>
@@ -138,10 +155,10 @@ input[type=number] {
 
                     <div class="form-group mb-4">
                         <label>Gambar Saat Ini:</label>
-                        @if($product->image)
-                            <img src="{{ $product->image }}" alt="{{ $product->judul }}" class="current-image" id="current_image">
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" alt="{{ $product->judul }}" class="current-image" id="current_image">
                             <div class="mt-2">
-                                <small class="text-muted">URL saat ini: {{ $product->image }}</small>
+                                <small class="text-muted">URL saat ini: {{ $product->image_url }}</small>
                             </div>
                         @else
                             <p>Tidak ada gambar tersimpan.</p>
@@ -149,7 +166,7 @@ input[type=number] {
                         
                         <label for="image_url" class="mt-3">Ganti URL Gambar dari Google Drive (kosongkan jika tidak diubah)</label>
                         <input type="url" name="image_url" id="image_url" class="form-control" 
-                               value="{{ old('image_url', $product->image) }}" 
+                               value="{{ old('image_url', $product->image_url) }}" 
                                placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
                                onchange="previewImage(this.value)">
                         

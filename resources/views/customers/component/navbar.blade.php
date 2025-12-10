@@ -202,6 +202,7 @@
 
     .register-btn:hover {
         background-color: #fff;
+        color: #2948ff;
     }
 
     .main-content {
@@ -362,8 +363,10 @@
         </div>
 
         <div class="auth-buttons">
-            <a href="#" class="login-btn">Masuk</a>
-            <a href="#" class="register-btn">Daftar</a>
+            <!-- Tombol Masuk mengarah ke halaman login (views/auth/login.blade.php) -->
+            <a href="{{ route('login') }}" class="login-btn">Masuk</a>
+            <!-- Tombol Daftar mengarah ke halaman registrasi (views/auth/register.blade.php) -->
+            <a href="{{ route('register') }}" class="register-btn">Daftar</a>
         </div>
     </div>
 </nav>

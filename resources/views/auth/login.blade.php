@@ -1,10 +1,10 @@
-@extends('products.layout')
+@extends('products.navbar')
 
 @section('title', 'Toko Berkah Elektronik - Login')
 
 @section('content')
-<section class="login-section container">
-  <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+<section class="login-section container" style="margin-top: 80px;">
+  <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
     {{-- Kolom Kiri: Deskripsi --}}
     <div class="col-lg-5 col-md-6 mb-4">
       <div class="login-text">
@@ -149,8 +149,8 @@
       margin-bottom: 30px;
     }
     
-    .login-text h2 {
-      font-size: 28px !important;
+    .login-text h1 {
+      font-size: 32px !important;
     }
   }
 </style>

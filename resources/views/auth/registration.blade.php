@@ -1,108 +1,189 @@
-@extends('products.layout')
+@extends('products.navbar')
 
-@section('title', 'Toko Berkah Elektronik - Registrasi')
+@section('title', 'Toko Berkah Elektronik - Register')
 
 @section('content')
-<section class="register-section container d-flex align-items-center" style="min-height: 80vh;">
-  <div class="row w-100 justify-content-center">
-    <div class="col-md-10 col-lg-8">
-      <div class="d-flex align-items-center justify-content-between">
-        {{-- Teks di kiri --}}
-        <div class="me-5" style="flex: 1;">
-          <h2 class="fw-bold">Daftarkan akun<br>baru Anda</h2>
-        </div>
-        
-        {{-- Form di kanan --}}
-        <div style="flex: 1;">
-          <form method="POST" action="{{ route('register.post') }}" id="registerForm">
-            @csrf
+<section class="register-section container" style="margin-top: 80px;">
+  <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    {{-- Kolom Kiri: Deskripsi --}}
+    <div class="col-lg-5 col-md-6 mb-4">
+      <div class="register-text">
+        <h1 class="fw-bold mb-3" style="font-size: 45px; color: #333;">
+          Buat akun baru
+        </h1>
+        <p style="color: #666; font-size: 16px;">
+          Daftar sekarang untuk menikmati berbagai kemudahan berbelanja di Toko Berkah Elektronik.
+        </p>
+      </div>
+    </div>
+    
+    {{-- Kolom Kanan: Form --}}
+    <div class="col-lg-5 col-md-6">
+      <div class="register-form">
+        <form method="POST" action="{{ route('register.post') }}">
+          @csrf
+          
+          {{-- Nama --}}
+          <div class="mb-4">
+            <label class="form-label fw-medium mb-2" style="color: #333; font-size: 14px;">
+              Nama Lengkap
+            </label>
+            <input 
+              type="text" 
+              class="form-control" 
+              name="name" 
+              placeholder="Nama lengkap" 
+              required 
+              value="{{ old('name') }}"
+              style="border-radius: 8px; padding: 12px 16px; border: 1px solid #ddd;"
+            >
+            @error('name')
+              <small class="text-danger d-block mt-1">{{ $message }}</small>
+            @enderror
+          </div>
 
-            <!-- Nama -->
-            <div class="mb-3">
-              <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" name="name" placeholder="Nama lengkap" required value="{{ old('name') }}">
-              @error('name')
-                <small class="text-danger">{{ $message }}</small>
-              @enderror
-            </div>
+          {{-- Email --}}
+          <div class="mb-4">
+            <label class="form-label fw-medium mb-2" style="color: #333; font-size: 14px;">
+              Email
+            </label>
+            <input 
+              type="email" 
+              class="form-control" 
+              name="email" 
+              placeholder="contoh@gmail.com" 
+              required 
+              value="{{ old('email') }}"
+              style="border-radius: 8px; padding: 12px 16px; border: 1px solid #ddd;"
+            >
+            @error('email')
+              <small class="text-danger d-block mt-1">{{ $message }}</small>
+            @enderror
+          </div>
 
-            <!-- Email -->
-            <div class="mb-3">
-              <label class="form-label">Email <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" name="email" placeholder="Email aktif" required value="{{ old('email') }}">
-              @error('email')
-                <small class="text-danger">{{ $message }}</small>
-              @enderror
-            </div>
+          {{-- Password --}}
+          <div class="mb-4">
+            <label class="form-label fw-medium mb-2" style="color: #333; font-size: 14px;">
+              Kata Sandi
+            </label>
+            <input 
+              type="password" 
+              class="form-control" 
+              name="password" 
+              placeholder="Minimal 6 karakter" 
+              required 
+              style="border-radius: 8px; padding: 12px 16px; border: 1px solid #ddd;"
+            >
+            @error('password')
+              <small class="text-danger d-block mt-1">{{ $message }}</small>
+            @enderror
+          </div>
 
-            <!-- Password -->
-            <div class="mb-3">
-              <label class="form-label">Kata Sandi <span class="text-danger">*</span></label>
-              <input type="password" class="form-control" name="password" id="password" placeholder="Kata sandi" required>
-              @error('password')
-                <small class="text-danger">{{ $message }}</small>
-              @enderror
-            </div>
+          {{-- Konfirmasi Password --}}
+          <div class="mb-4">
+            <label class="form-label fw-medium mb-2" style="color: #333; font-size: 14px;">
+              Konfirmasi Kata Sandi
+            </label>
+            <input 
+              type="password" 
+              class="form-control" 
+              name="password_confirmation" 
+              placeholder="Ulangi kata sandi" 
+              required 
+              style="border-radius: 8px; padding: 12px 16px; border: 1px solid #ddd;"
+            >
+          </div>
 
-            <!-- Confirm Password -->
-            <div class="mb-3">
-              <label class="form-label">Konfirmasi Kata Sandi <span class="text-danger">*</span></label>
-              <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Ulangi kata sandi" required>
-              <div class="password-error" id="passwordError" style="color: #dc3545; font-size: 12px; margin-top: 5px; display: none;">Password dan konfirmasi password tidak sama</div>
+          {{-- Pesan Error --}}
+          @if(session('error'))
+            <div class="alert alert-danger py-2 mb-3" style="font-size: 14px; border-radius: 8px;">
+              {{ session('error') }}
             </div>
+          @endif
+          
+          {{-- Pesan Success --}}
+          @if(session('success'))
+            <div class="alert alert-success py-2 mb-3" style="font-size: 14px; border-radius: 8px;">
+              {{ session('success') }}
+            </div>
+          @endif
 
-            <!-- Tombol -->
-            <div class="d-grid mb-3">
-              <button type="submit" class="btn btn-register" id="submitButton" style="background-color: #2948ff; color: #fff; font-weight: 600; border-radius: 50px; height: 48px;">Daftar Sekarang</button>
-            </div>
+          {{-- Tombol Daftar --}}
+          <div class="d-grid mb-3">
+            <button 
+              type="submit" 
+              class="btn fw-semibold"
+              style="
+                background-color: #2948ff; 
+                color: #fff; 
+                border-radius: 8px;
+                border: none;
+                font-size: 16px;
+                padding: 14px;
+                transition: background-color 0.2s;
+              "
+              onmouseover="this.style.backgroundColor='#1c36cc'"
+              onmouseout="this.style.backgroundColor='#2948ff'"
+            >
+              Daftar
+            </button>
+          </div>
 
-            <div class="text-center">
-              Sudah punya akun?
-              <a href="{{ route('login') }}" class="text-decoration-none fw-bold">Masuk</a>
-            </div>
-          </form>
-        </div>
+          {{-- Tombol Masuk --}}
+          <div class="d-grid">
+            <a 
+              href="{{ route('login') }}" 
+              class="btn fw-semibold text-decoration-none"
+              style="
+                border-radius: 8px; 
+                border: 1.5px solid #333; 
+                color: #333; 
+                background: #fff; 
+                font-size: 16px;
+                padding: 14px;
+                transition: all 0.2s;
+                text-align: center;
+              "
+              onmouseover="this.style.borderColor='#2948ff'; this.style.color='#2948ff'"
+              onmouseout="this.style.borderColor='#333'; this.style.color='#333'"
+            >
+              Sudah punya akun? Masuk
+            </a>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </section>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('password_confirmation');
-    const passwordError = document.getElementById('passwordError');
-    const submitButton = document.getElementById('submitButton');
-    const form = document.getElementById('registerForm');
-
-    function validatePasswords() {
-      const password = passwordInput.value;
-      const confirmPassword = confirmPasswordInput.value;
-
-      if (password !== confirmPassword && confirmPassword !== '') {
-        passwordError.style.display = 'block';
-        confirmPasswordInput.classList.add('is-invalid');
-        submitButton.disabled = true;
-        return false;
-      } else {
-        passwordError.style.display = 'none';
-        confirmPasswordInput.classList.remove('is-invalid');
-        submitButton.disabled = false;
-        return true;
-      }
+<style>
+  body {
+    background-color: #fff;
+  }
+  
+  .register-section {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .form-control:focus {
+    border-color: #2948ff;
+    box-shadow: 0 0 0 0.2rem rgba(41, 72, 255, 0.15);
+  }
+  
+  @media (max-width: 768px) {
+    .register-section {
+      padding: 20px;
     }
-
-    // Validasi real-time saat mengetik
-    passwordInput.addEventListener('input', validatePasswords);
-    confirmPasswordInput.addEventListener('input', validatePasswords);
-
-    // Validasi sebelum submit form
-    form.addEventListener('submit', function(e) {
-      if (!validatePasswords()) {
-        e.preventDefault();
-        alert('Password dan konfirmasi password harus sama!');
-      }
-    });
-  });
-</script>
+    
+    .register-text {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .register-text h1 {
+      font-size: 32px !important;
+    }
+  }
+</style>
 @endsection

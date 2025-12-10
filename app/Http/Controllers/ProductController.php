@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -98,7 +99,7 @@ class ProductController extends Controller
             'diskon'   => $request->diskon ?? 0,
             'garansi'  => $request->garansi,
             'detail'   => $request->detail,
-            'image'    => $imageUrl,
+            'image_url' => $imageUrl, // ← DIUBAH dari 'image' menjadi 'image_url'
         ];
 
         Product::create($data);
@@ -142,7 +143,7 @@ class ProductController extends Controller
 
         // Update gambar jika ada URL baru
         if ($request->has('image_url') && !empty($request->image_url)) {
-            $data['image'] = $this->convertDriveUrl($request->image_url);
+            $data['image_url'] = $this->convertDriveUrl($request->image_url); // ← DIUBAH dari 'image' menjadi 'image_url'
         }
 
         // Default diskon

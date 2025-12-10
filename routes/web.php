@@ -2,14 +2,8 @@
 
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\ProductController;
-
-
-
-Route::get('/detail', function () {
-    return view('customers.dashboard.detail');
-})->name('detail');
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return redirect('/beranda');
@@ -26,7 +20,24 @@ Route::resource('products', ProductController::class);
 
 Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 
-Route::get('/customer/login', function () {
-    return view('customers.login'); // kalau belum ada, buat nanti
-})->name('customer.login');
+// AUTH ROUTES - SESUAI DENGAN AuthController
+Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::post('/login', [AuthController::class, 'postLogin'])->name('login.post');
 
+Route::get('/register', [AuthController::class, 'registration'])->name('register');
+Route::post('/register', [AuthController::class, 'postRegistration'])->name('register.post');
+
+// Dashboard admin
+Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('admin.dashboard');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Reset Password
+Route::get('/reset-password', [AuthController::class, 'resetPassword'])->name('reset.password');
+Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
+
+// Customer login (jika ada view terpisah)
+Route::get('/customer/login', function () {
+    return view('customers.login');
+})->name('customer.login');

@@ -103,11 +103,13 @@
 
     {{-- LEFT IMAGE --}}
     <div class="product-image-box">
-        @if($product->image)
+        @if($product->image_url)
             {{-- langsung tampilkan URL (Drive usercontent atau url apa pun) --}}
-            <img src="{{ $product->image }}" alt="{{ $product->judul }}">
+            <img src="{{ $product->image_url }}" alt="{{ $product->judul }}"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image';">
         @else
-            <p>Tidak ada gambar.</p>
+            <img src="https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image" 
+                 alt="No Image" style="border-radius: 10px;">
         @endif
     </div>
 
@@ -188,15 +190,19 @@
     let price = {{ $hargaAkhir }};
 
     function increaseQty() {
-        qty++;
-        document.getElementById("qty").textContent = qty;
-        updateSubtotal();
+        if (qty < {{ $product->stok }}) {
+            qty++;
+            document.getElementById("qty").textContent = qty;
+            updateSubtotal();
+        }
     }
 
     function decreaseQty() {
-        if (qty > 1) qty--;
-        document.getElementById("qty").textContent = qty;
-        updateSubtotal();
+        if (qty > 1) {
+            qty--;
+            document.getElementById("qty").textContent = qty;
+            updateSubtotal();
+        }
     }
 
     function updateSubtotal() {

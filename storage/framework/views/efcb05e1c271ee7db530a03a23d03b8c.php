@@ -103,11 +103,13 @@
 
     
     <div class="product-image-box">
-        <?php if($product->image): ?>
-            
-            <img src="<?php echo e($product->image); ?>" alt="<?php echo e($product->judul); ?>">
+        <?php if($product->image_url): ?>
+            <img src="<?php echo e($product->image_url); ?>" 
+                 alt="<?php echo e($product->judul); ?>"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image';">
         <?php else: ?>
-            <p>Tidak ada gambar.</p>
+            <img src="https://via.placeholder.com/450x450/6b7280/ffffff?text=No+Image"
+                 alt="No Image">
         <?php endif; ?>
     </div>
 
@@ -161,22 +163,22 @@
         </p>
 
         
-        <?php if(auth()->guard('customer')->guest()): ?>
-            <a href="<?php echo e(route('customer.login')); ?>">
+        <?php if(auth()->guard()->guest()): ?>
+            <a href="<?php echo e(route('login')); ?>">
                 <button class="buy-button">Beli Langsung</button>
             </a>
-            <a href="<?php echo e(route('customer.login')); ?>">
+            <a href="<?php echo e(route('login')); ?>">
                 <button class="cart-button">+ Keranjang</button>
             </a>
         <?php endif; ?>
 
         
-        <?php if(auth()->guard('customer')->check()): ?>
-            <a href="<?php echo e(route('checkout', $product->id)); ?>">
+        <?php if(auth()->guard()->check()): ?>
+            <a href="#">
                 <button class="buy-button">Beli Langsung</button>
             </a>
 
-            <a href="<?php echo e(route('cart.add', $product->id)); ?>">
+            <a href="#">
                 <button class="cart-button">+ Keranjang</button>
             </a>
         <?php endif; ?>
@@ -186,19 +188,25 @@
 </div>
 
 <script>
+    const data = document.getElementById('product-data');
     let qty = 1;
-    let price = <?php echo e($hargaAkhir); ?>;
+    let price = Number(data.dataset.price);
+    let maxStock = Number(data.dataset.stock);
 
     function increaseQty() {
-        qty++;
-        document.getElementById("qty").textContent = qty;
-        updateSubtotal();
+        if (qty < maxStock) {
+            qty++;
+            document.getElementById("qty").textContent = qty;
+            updateSubtotal();
+        }
     }
 
     function decreaseQty() {
-        if (qty > 1) qty--;
-        document.getElementById("qty").textContent = qty;
-        updateSubtotal();
+        if (qty > 1) {
+            qty--;
+            document.getElementById("qty").textContent = qty;
+            updateSubtotal();
+        }
     }
 
     function updateSubtotal() {

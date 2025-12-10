@@ -420,4 +420,4 @@
         }
     });
 </script>
-<?php echo $__env->yieldPushContent('scripts'); ?><?php /**PATH C:\laragon\www\TokoBerkahElektronik\berkahelektronik_raff\resources\views/customers/component/navbar.blade.php ENDPATH**/ ?>
+<?php echo $__env->yieldPushContent('scripts'); ?><?php /**PATH C:\laragon\www\TokoBerkahElektronik\berkahelektronik_raff\resources\views/products/navbar.blade.php ENDPATH**/ ?>

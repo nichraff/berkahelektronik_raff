@@ -10,7 +10,7 @@ use App\Http\Controllers\StripeController;
 
 // Redirect root ke dashboard pembeli
 Route::get('/', function () {
-    return redirect('/dashboardpembeli');
+    return redirect('/beranda');
 });
 
 // Dashboard pembeli - INI HARUS DI ATAS ROUTE RESOURCE

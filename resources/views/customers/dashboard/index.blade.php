@@ -331,7 +331,7 @@
         </div>
         
         <header>
-            @include('customers.component.navbarpembeli')
+            @include('customers.component.navbar')
         </header>
         
         <section>

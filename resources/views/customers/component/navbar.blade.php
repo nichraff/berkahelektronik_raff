@@ -316,7 +316,7 @@
 
 <nav class="navbar-main">
     <div class="navbar-container">
-        <a href="#" class="navbar-brand">
+        <a href="{{ route('beranda') }}" class="navbar-brand">
             TOKO BERKAH<br>ELEKTRONIK
         </a>
         <div class="navbar-center-group">
@@ -343,11 +343,6 @@
                         <div class="category-item">Blender</div>
                         <div class="category-item">Rice Cooker</div>
                         <div class="category-item">Microwave</div>
-
-                        <div class="category-item">Vaccum Cleaner</div>
-                        <div class="category-item">Catokan</div>
-                        <div class="category-item">Mesin Cuci</div>
-                        <div class="category-item">Hair Dryer</div>
                     </div>
                 </div>
             </div>

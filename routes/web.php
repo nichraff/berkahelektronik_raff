@@ -4,9 +4,7 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
-Route::get('/beranda', function () {
-    return view('customers.dashboard.index');
-})->name('beranda');
+
 
 Route::get('/detail', function () {
     return view('customers.dashboard.detail');
@@ -25,7 +23,7 @@ Route::put('/products/{product}', [ProductController::class, 'update'])->name('p
 Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 Route::resource('products', ProductController::class);
 
-Route::get('/beranda', [HomeController::class, 'index']);
+Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 
 Route::get('/customer/login', function () {
     return view('customers.login'); // kalau belum ada, buat nanti

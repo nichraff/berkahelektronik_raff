@@ -3,9 +3,30 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Beranda | BerkahElektronik</title>
+        <title>Dashboard Pembeli | BerkahElektronik</title>
+        
+        <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        
+        <!-- FontAwesome untuk icon -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
         <style>
+            /* DEBUG INFO - akan muncul di atas */
+            .debug-info {
+                background: #f8f9fa;
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                margin: 5px;
+                font-size: 12px;
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                z-index: 9999;
+                max-width: 200px;
+            }
+            
             /* Gaya khusus untuk card compact seperti gambar */
             .product-card-compact {
                 border: 1px solid #e0e0e0;
@@ -165,6 +186,31 @@
                 margin-bottom: 20px;
             }
             
+            /* CAROUSEL STYLES */
+            .carousel-item {
+                height: 29rem;
+                background: #f5f5f5; /* Background fallback */
+                background-position: center;
+                background-size: cover;
+            }
+            
+            .carousel-item img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+            }
+            
+            /* Fallback banner style */
+            .banner-fallback {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                text-align: center;
+                height: 100%;
+            }
+            
             /* Untuk tampilan mobile */
             @media (max-width: 768px) {
                 .product-image-compact {
@@ -212,6 +258,14 @@
                 .product-brand-compact {
                     font-size: 10px;
                 }
+                
+                .carousel-item {
+                    height: 20rem;
+                }
+                
+                .debug-info {
+                    display: none; /* Sembunyikan debug di mobile */
+                }
             }
             
             @media (max-width: 576px) {
@@ -235,6 +289,10 @@
                     font-size: 9px;
                     padding: 4px 8px;
                     min-width: 50px;
+                }
+                
+                .carousel-item {
+                    height: 15rem;
                 }
             }
             
@@ -265,47 +323,46 @@
         </style>
     </head>
     <body>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxMFl2IwrKpljU" crossorigin="anonymous"></script>
+        <!-- DEBUG INFO -->
+        <div class="debug-info">
+            <strong>Debug Info:</strong><br>
+            Produk: {{ $products->count() }}<br>
+            Route: {{ request()->path() }}
+        </div>
+        
         <header>
-            @include('customers.component.navbar')
+            @include('customers.component.navbarpembeli')
         </header>
         
         <section>
-            <style>
-                .carousel-item{
-                    height: 29rem;
-                    background-position: center;
-                }
-            </style>
+            <!-- BANNER CAROUSEL -->
             <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-                    <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
-                    <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+                    @for($i = 0; $i < 6; $i++)
+                        <button type="button" data-bs-target="#bannerCarousel" 
+                                data-bs-slide-to="{{ $i }}" 
+                                class="{{ $i == 0 ? 'active' : '' }}" 
+                                aria-label="Slide {{ $i+1 }}"></button>
+                    @endfor
                 </div>
+                
                 <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="{{ asset('images/Banner Promo/1.jpg') }}" class="d-block w-100" alt="slide 1">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ asset('images/Banner Promo/2.jpg') }}" class="d-block w-100" alt="slide 2">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ asset('images/Banner Promo/3.jpg') }}" class="d-block w-100" alt="slide 3">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ asset('images/Banner Promo/4.jpg') }}" class="d-block w-100" alt="slide 4">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ asset('images/Banner Promo/5.jpg') }}" class="d-block w-100" alt="slide 5">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ asset('images/Banner Promo/6.jpg') }}" class="d-block w-100" alt="slide 6">
-                    </div>
+                    @for($i = 1; $i <= 6; $i++)
+                        @php
+                            $bannerPath = "images/Banner Promo/{$i}.jpg";
+                            $bannerUrl = asset($bannerPath);
+                        @endphp
+                        
+                        <div class="carousel-item {{ $i == 1 ? 'active' : '' }}">
+                            <!-- Coba load gambar, jika error tampilkan fallback -->
+                            <img src="{{ $bannerUrl }}" 
+                                 class="d-block w-100" 
+                                 alt="Promo {{ $i }}"
+                                 onerror="this.onerror=null; this.parentElement.innerHTML = '<div class=\'banner-fallback\'><div><h3>Promo Spesial {{ $i }}</h3><p>Diskon hingga 50%</p></div></div>';">
+                        </div>
+                    @endfor
                 </div>
+                
                 <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
@@ -316,114 +373,147 @@
                 </button>
             </div>
 
-            <!-- REKOMENDASI SECTION - UKURAN COMPACT -->
+            <!-- DAFTAR PRODUK -->
             <section class="container py-3">
-                <h2 class="text-left mb-3" style="font-size: 1.4rem;"><b>Daftar Produk</b></h2>
+                <h2 class="text-left mb-3" style="font-size: 1.4rem;">
+                    <b>Daftar Produk @if($products->count() > 0)({{ $products->count() }})@endif</b>
+                </h2>
                 
-                <div class="row row-compact">
-                    @forelse($products as $product)
-                    <div class="col-card-compact">
-                        <a href="{{ route('products.show', $product->id) }}" class="product-card-compact">
-                            <!-- IMAGE CONTAINER DENGAN BADGE DI ATAS -->
-                            <div class="product-image-wrapper">
-                                <!-- BADGE SALE YANG LEBIH BESAR -->
-                                @if($product->diskon > 0)
-                                    <div class="badge-above-image">
-                                        <div class="badge-sale-percent">
-                                            <span class="sale-text">SALE</span>
-                                            <span class="percent-number">{{ $product->diskon }}%</span>
+                @if($products->count() > 0)
+                    <div class="row row-compact">
+                        @foreach($products as $product)
+                        <div class="col-card-compact">
+                            <a href="{{ route('products.show', $product->id) }}" class="product-card-compact">
+                                <!-- IMAGE CONTAINER DENGAN BADGE DI ATAS -->
+                                <div class="product-image-wrapper">
+                                    <!-- BADGE SALE YANG LEBIH BESAR -->
+                                    @if($product->diskon > 0)
+                                        <div class="badge-above-image">
+                                            <div class="badge-sale-percent">
+                                                <span class="sale-text">SALE</span>
+                                                <span class="percent-number">{{ $product->diskon }}%</span>
+                                            </div>
                                         </div>
+                                    @else
+                                        <!-- Cek apakah produk baru -->
+                                        @php
+                                            $isNew = false;
+                                            if (isset($product->created_at)) {
+                                                $isNew = \Carbon\Carbon::parse($product->created_at)->diffInDays(now()) < 7;
+                                            }
+                                        @endphp
+                                        @if($isNew)
+                                            <div class="badge-above-image">
+                                                <div class="badge-new-only">NEW</div>
+                                            </div>
+                                        @endif
+                                    @endif
+                                    
+                                    <!-- GAMBAR PRODUK -->
+                                    <div class="product-image-compact">
+                                        <img src="{{ $product->image }}" 
+                                            class="product-img-compact" 
+                                            alt="{{ $product->judul }}"
+                                            onerror="this.onerror=null; this.src='https://via.placeholder.com/300x140/6b7280/ffffff?text=No+Image'">
                                     </div>
-                                @else
-                                    <!-- Cek apakah produk baru -->
+                                </div>
+                                
+                                <!-- BRAND (SAMSUNG) - kecil di atas -->
+                                <div class="product-brand-compact">{{ $product->brand }}</div>
+                                
+                                <!-- JUDUL PRODUK - lebih ringkas -->
+                                <div class="product-title-compact">
                                     @php
-                                        $isNew = false;
-                                        if (isset($product->created_at)) {
-                                            $isNew = \Carbon\Carbon::parse($product->created_at)->diffInDays(now()) < 7;
+                                        // Potong judul agar lebih pendek
+                                        $shortTitle = $product->judul;
+                                        if (strlen($shortTitle) > 40) {
+                                            $shortTitle = substr($shortTitle, 0, 40) . '...';
                                         }
                                     @endphp
-                                    @if($isNew)
-                                        <div class="badge-above-image">
-                                            <div class="badge-new-only">NEW</div>
-                                        </div>
-                                    @endif
-                                @endif
-                                
-                                <!-- GAMBAR PRODUK -->
-                                <div class="product-image-compact">
-                                    <img src="{{ $product->image }}" 
-                                        class="product-img-compact" 
-                                        alt="{{ $product->judul }}"
-                                        onerror="this.onerror=null; this.src='https://via.placeholder.com/300x140/6b7280/ffffff?text=No+Image'">
+                                    {{ $shortTitle }}
                                 </div>
-                            </div>
-                            
-                            <!-- BRAND (SAMSUNG) - kecil di atas -->
-                            <div class="product-brand-compact">{{ $product->brand }}</div>
-                            
-                            <!-- JUDUL PRODUK - lebih ringkas -->
-                            <div class="product-title-compact">
-                                @php
-                                    // Potong judul agar lebih pendek
-                                    $shortTitle = $product->judul;
-                                    if (strlen($shortTitle) > 40) {
-                                        $shortTitle = substr($shortTitle, 0, 40) . '...';
-                                    }
-                                @endphp
-                                {{ $shortTitle }}
-                            </div>
-                            
-                            <!-- HARGA - harga diskon warna merah -->
-                            <div class="product-price-compact">
-                                @php
-                                    // Hitung harga setelah diskon
-                                    $harga_diskon = $product->harga - ($product->harga * $product->diskon / 100);
-                                @endphp
                                 
-                                <!-- Harga diskon - WARNA MERAH jika ada diskon -->
-                                <span class="current-price-compact @if($product->diskon > 0) current-price-discount @endif">
-                                    Rp{{ number_format($harga_diskon, 0, ',', '.') }}
-                                </span>
-                                
-                                <!-- Harga asli jika ada diskon -->
-                                @if($product->diskon > 0)
-                                    <span class="original-price-compact">
-                                        Rp{{ number_format($product->harga, 0, ',', '.') }}
+                                <!-- HARGA - harga diskon warna merah -->
+                                <div class="product-price-compact">
+                                    @php
+                                        // Hitung harga setelah diskon
+                                        $harga_diskon = $product->harga - ($product->harga * $product->diskon / 100);
+                                    @endphp
+                                    
+                                    <!-- Harga diskon - WARNA MERAH jika ada diskon -->
+                                    <span class="current-price-compact @if($product->diskon > 0) current-price-discount @endif">
+                                        Rp{{ number_format($harga_diskon, 0, ',', '.') }}
                                     </span>
-                                @endif
-                            </div>
-                        </a>
+                                    
+                                    <!-- Harga asli jika ada diskon -->
+                                    @if($product->diskon > 0)
+                                        <span class="original-price-compact">
+                                            Rp{{ number_format($product->harga, 0, ',', '.') }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </a>
+                        </div>
+                        @endforeach
                     </div>
-                    @empty
-                    <!-- Jika belum ada produk di database -->
-                    <div class="col-12 text-center py-4">
-                        <p class="text-muted mb-2" style="font-size: 14px;">Belum ada produk di database</p>
-                        <a href="{{ route('products.create') }}" class="btn btn-sm btn-primary" style="font-size: 12px; padding: 4px 12px;">
-                            Tambah Produk
-                        </a>
+                    
+                    <!-- PAGINATION (jika ada) -->
+                    @if(isset($products) && method_exists($products, 'links'))
+                    <div class="mt-3">
+                        {{ $products->links() }}
                     </div>
-                    @endforelse
-                </div>
-                
-                <!-- PAGINATION (jika ada) -->
-                @if(isset($products) && method_exists($products, 'links'))
-                <div class="mt-3">
-                    {{ $products->links() }}
-                </div>
+                    @endif
+                    
+                @else
+                    <!-- TAMPILAN JIKA TIDAK ADA PRODUK -->
+                    <div class="text-center py-5 border rounded bg-light">
+                        <div class="mb-3">
+                            <i class="fas fa-box-open fa-3x text-muted"></i>
+                        </div>
+                        <h4 class="text-muted mb-2">Belum ada produk tersedia</h4>
+                        <p class="text-muted mb-4">Database produk masih kosong</p>
+                        
+                        <!-- Tombol untuk tambah produk -->
+                        @if(auth()->check())
+                            <a href="{{ route('products.create') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Tambah Produk Pertama
+                            </a>
+                        @else
+                            <p class="small text-muted mt-2">
+                                Hubungi admin untuk menambahkan produk
+                            </p>
+                        @endif
+                    </div>
                 @endif
             </section>
         </section>
         
+        <!-- BOOTSTRAP JS - HARUS DI BAWAH SETELAH SEMUA KONTEN -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxMFl2IwrKpljU" crossorigin="anonymous"></script>
+        
         <script>
-        // Script untuk handling error gambar
+        // Script untuk handling error gambar dan init carousel
         document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('.product-img-compact');
-            images.forEach(img => {
+            console.log('Dashboard loaded');
+            
+            // Handle error gambar produk
+            const productImages = document.querySelectorAll('.product-img-compact');
+            productImages.forEach(img => {
                 img.onerror = function() {
                     this.src = 'https://via.placeholder.com/300x140/6b7280/ffffff?text=No+Image';
                     this.onerror = null;
                 };
             });
+            
+            // Init carousel secara manual jika diperlukan
+            const carouselElement = document.getElementById('bannerCarousel');
+            if (carouselElement) {
+                const carousel = new bootstrap.Carousel(carouselElement, {
+                    interval: 3000,
+                    wrap: true
+                });
+                console.log('Carousel initialized');
+            }
         });
         </script>
     </body>

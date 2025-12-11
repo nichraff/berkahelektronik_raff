@@ -53,18 +53,19 @@
             {{ $product->detail }}
         </td>
         
-        {{-- PERBAIKAN GAMBAR --}}
         <td>
-            @if($product->image_url)
-                <img src="{{ $product->image_url }}" 
-                     class="product-image"
-                     style="max-width: 100px; max-height: 100px; border-radius: 5px; border: 1px solid #ddd; padding: 2px;"
-                     alt="{{ $product->judul }}"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<small class=\'text-muted\'>Image Error</small>';">
-            @else
-                <span class="text-muted">No Image</span>
-            @endif
+        @php
+            $placeholder = 'https://lh3.googleusercontent.com/d/15Ubr-kYNPIjph3G5Rnyspc02n6Zw_0LD'; // link No Image
+            $imgUrl = $product->image_url ?: $placeholder;
+        @endphp
+
+        <img src="{{ $imgUrl }}" 
+            class="product-image"
+            style="max-width: 100px; max-height: 100px; border-radius: 5px; border: 1px solid #ddd; padding: 2px;"
+            alt="{{ $product->judul }}"
+            onerror="this.src='{{ $placeholder }}';">
         </td>
+
         
         <td>
             <form action="{{ route('products.destroy',$product->id) }}" method="POST" style="display: inline-block;">

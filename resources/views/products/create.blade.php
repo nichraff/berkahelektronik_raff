@@ -1,37 +1,17 @@
 @extends('products.layout')
-  
+
 @section('content')
 
 <style>
-/* Menonaktifkan panah pada input number */
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-/* CSS UNTUK WRAPPER FORM */
+/* Style form */
 .form-scrollable-wrapper {
-    /* form lebih tinggi */
-    max-height: 85vh; 
-    
-    /* Mengaktifkan vertical scroll */
+    max-height: 80vh; 
     overflow-y: auto; 
-    
-    /* Memberi sedikit padding di kanan agar konten tidak terlalu mepet tepi */
     padding-right: 15px;
 }
-
-/* CSS MEMBATASI LEBAR FORM  */
 .form-produk-pendek {
-    /* Lebar form */
-    max-width: 450px; 
+    max-width: 450px;
 }
-
-/* Style untuk preview gambar */
 .image-preview {
     max-width: 100%;
     max-height: 200px;
@@ -41,7 +21,6 @@ input[type=number] {
     padding: 5px;
     display: none;
 }
-
 .drive-help {
     font-size: 0.875rem;
     color: #6c757d;
@@ -50,39 +29,29 @@ input[type=number] {
 </style>
 
 <div class="container mt-4">
-    
     <div class="row d-flex align-items-center">
-
         <div class="col-md-4">
             <h1>Tambah Produk</h1>
         </div>
-
         <div class="col-md-8">
-            
             <form class="form-produk-pendek" action="{{ route('products.store') }}" method="POST">
                 @csrf
-                
+
                 @if($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h5 class="alert-heading mb-2">
-                        <i class="bi bi-exclamation-triangle-fill"></i> Ada kesalahan dalam pengisian form
-                    </h5>
-                    <ul class="mb-0 ps-3">
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 @endif
-                
-                <div class="form-scrollable-wrapper hidden-scroll">
 
-                <div class="form-scrollable-wrapper hidden-scroll"> 
+                <div class="form-scrollable-wrapper">
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="category_id">Kategori</label>
-                        <select name="kategori" id="category_id" class="form-control">
+                        <select name="category_id" id="category_id" class="form-control">
                             <option value="">Pilih Kategori</option>
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -92,69 +61,68 @@ input[type=number] {
                         </select>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="brand">Brand</label>
                         <input type="text" name="brand" class="form-control" value="{{ old('brand') }}">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="judul">Nama Produk</label>
                         <input type="text" name="judul" class="form-control" value="{{ old('judul') }}">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="model">Model</label>
                         <input type="text" name="model" class="form-control" value="{{ old('model') }}">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="stok">Stok Awal</label>
-                        <input type="number" name="stok" class="form-control" value="{{ old('stok') }}" min="0"> 
+                        <input type="number" name="stok" class="form-control" value="{{ old('stok') }}" min="0">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="harga">Harga</label>
                         <input type="number" name="harga" class="form-control" value="{{ old('harga') }}">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="diskon">Diskon (%)</label>
                         <input type="number" name="diskon" class="form-control" value="{{ old('diskon') }}" min="0" max="100">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="garansi">Garansi</label>
                         <input type="text" name="garansi" class="form-control" value="{{ old('garansi') }}">
                     </div>
 
-                    <div class="form-group mb-3">
+                    <div class="mb-3">
                         <label for="detail">Detail Produk</label>
                         <textarea name="detail" class="form-control" rows="3">{{ old('detail') }}</textarea>
                     </div>
 
-                    <div class="form-group mb-4">
+                    <div class="mb-3">
                         <label for="image_url">URL Gambar dari Google Drive</label>
                         <input type="url" name="image_url" id="image_url" class="form-control" 
                                value="{{ old('image_url') }}" 
-                               placeholder="https://lh3.googleusercontent.com/d/FILE_ID"
+                               placeholder="https://drive.google.com/uc?export=view&id=FILE_ID"
                                onchange="previewImage(this.value)">
-                        
+
                         <div class="drive-help">
                             <small>
                                 Cara dapatkan URL: 
                                 <ol>
                                     <li>Upload gambar ke Google Drive</li>
-                                    <li>Klik kanan file → "Dapatkan link"</li>
+                                    <li>Klik kanan → "Dapatkan link"</li>
                                     <li>Setel akses menjadi "Siapa saja dengan link"</li>
-                                    <li>Salin link dan tempel di sini</li>
+                                    <li>Salin ID file & tempel di placeholder</li>
                                 </ol>
                             </small>
                         </div>
 
-                        <!-- Preview Gambar -->
                         <img id="image_preview" class="image-preview" alt="Preview Gambar">
                     </div>
-                    
+
                     <div class="mb-3">
                         <button type="submit" class="btn btn-success">Simpan</button>
                         <a href="{{ route('products.index') }}" class="btn btn-primary">Kembali</a>
@@ -165,4 +133,17 @@ input[type=number] {
         </div>
     </div>
 </div>
+
+<script>
+function previewImage(url) {
+    const img = document.getElementById('image_preview');
+    if(url) {
+        img.src = url;
+        img.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+    }
+}
+</script>
+
 @endsection

@@ -1,5 +1,5 @@
 @extends('products.layout')
- 
+
 @section('content')
 
 <h4 class="fw-bold mt-1 mb-3" style="font-size: 25px;">
@@ -53,19 +53,19 @@
             {{ $product->detail }}
         </td>
         
+        {{-- GAMBAR --}}
         <td>
         @php
-            $placeholder = 'https://lh3.googleusercontent.com/d/15Ubr-kYNPIjph3G5Rnyspc02n6Zw_0LD'; // link No Image
+            $placeholder = 'https://drive.google.com/uc?export=view&id=15Ubr-kYNPIjph3G5Rnyspc02n6Zw_0LD';
             $imgUrl = $product->image_url ?: $placeholder;
         @endphp
 
         <img src="{{ $imgUrl }}" 
             class="product-image"
-            style="max-width: 100px; max-height: 100px; border-radius: 5px; border: 1px solid #ddd; padding: 2px;"
+            style="max-width:100px; max-height:100px; border-radius:5px; border:1px solid #ddd; padding:2px;"
             alt="{{ $product->judul }}"
             onerror="this.src='{{ $placeholder }}';">
         </td>
-
         
         <td>
             <form action="{{ route('products.destroy',$product->id) }}" method="POST" style="display: inline-block;">

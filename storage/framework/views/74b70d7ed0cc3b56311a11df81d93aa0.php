@@ -174,13 +174,12 @@
 
         
         <?php if(auth()->guard()->check()): ?>
-            <a href="#">
-                <button class="buy-button">Beli Langsung</button>
-            </a>
 
-            <a href="#">
-                <button class="cart-button">+ Keranjang</button>
-            </a>
+        
+        <form action="<?php echo e(route('cart.add', $product->id)); ?>" method="POST">
+            <?php echo csrf_field(); ?>
+            <button class="cart-button">+ Keranjang</button>
+        </form>
         <?php endif; ?>
 
     </div>
@@ -213,5 +212,4 @@
         document.getElementById("subtotal").textContent =
             "Rp" + (qty * price).toLocaleString("id-ID");
     }
-</script>
-<?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/customers/dashboard/detail.blade.php ENDPATH**/ ?>
+</script><?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/customers/dashboard/detail.blade.php ENDPATH**/ ?>

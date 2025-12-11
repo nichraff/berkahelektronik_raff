@@ -14,9 +14,12 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        // TIDAK ADA middleware 'admin' atau 'user' di sini
-    ];
+    'auth' => \App\Http\Middleware\Authenticate::class,
+    'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+    
+    // Middleware custom
+    'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    'user'  => \App\Http\Middleware\UserMiddleware::class,
+];
+
 }

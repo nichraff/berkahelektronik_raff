@@ -3,121 +3,151 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Toko Berkah Elektronik - Dashboard</title>
+  <title>Toko Berkah Elektronik</title>
 
-  <!-- Bootstrap & Icons -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-  <!-- Optional: CSS tambahan untuk dashboard -->
-  <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3a0ca3;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+    }
+
+    body {
+      background-color: #f5f7fb;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .main-container {
+      padding: 40px 20px;
+      margin-top: 30px;
+    }
+
+    .content-box {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* MENU & SUMMARY CARD */
+    .menu-card {
+      background: white;
+      padding: 35px 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .menu-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .menu-card h4 {
+      font-size: 28px;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .menu-card p {
+      color: #666;
+      font-size: 15px;
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- INCLUDE NAVBAR -->
   @include('customers.dashboard.navbar')
 
-  <!-- DASHBOARD CONTENT -->
-  <div class="dashboard-container d-flex">
+  <div class="main-container">
+    <div class="content-box">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar bg-white p-3 shadow-sm">
-      <a href="{{ route('admin.dashboard') }}" class="menu-item active d-flex align-items-center gap-2 mb-2">
-        <span class="menu-icon">📊</span> Dashboard
-      </a>
-      <a href="{{ route('products.index') }}" class="menu-item d-flex align-items-center gap-2 mb-2">
-        <span class="menu-icon">📦</span> Barang
-      </a>
-      <a href="#" class="menu-item d-flex align-items-center gap-2 mb-2">
-        <span class="menu-icon">📈</span> Laporan Penjualan
-      </a>
-      <a href="#" class="menu-item d-flex align-items-center gap-2 mb-2">
-        <span class="menu-icon">👤</span> Admin
-      </a>
-      <a href="#" class="menu-item d-flex align-items-center gap-2 mb-2">
-        <span class="menu-icon">🧾</span> Invoice
-      </a>
+      <!-- MENU GRID -->
+      <div class="row g-4 mb-4">
 
-      <!-- LOGOUT SIDEBAR -->
-      <a href="#"
-         class="menu-item d-flex align-items-center gap-2"
-         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-        <span class="menu-icon">🚪</span> Logout
-      </a>
-
-      <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-        @csrf
-      </form>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="main-content flex-fill p-3">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h1 class="display-6 fw-bold">Hi, {{ auth()->user()->name }}</h1>
-          <p class="lead">
-            Selamat datang di dashboard Toko Berkah Elektronik.<br>
-            Kelola toko Anda dengan mudah dari sini.
-          </p>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- TRANSAKSI -->
-        <div class="col-md-8">
-          <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span>Transaksi Terbaru</span>
-              <a href="#" class="view-all text-primary fw-bold">View All</a>
-            </div>
-            <div class="card-body p-0">
-              <div class="transaction-item d-flex justify-content-between align-items-center p-3 border-bottom">
-                <div class="transaction-info">
-                  <div class="fw-bold">TOKO-BERKAH-ELEKTRONIK 1544...</div>
-                  <div class="transaction-date text-muted small">2025-10-02</div>
-                </div>
-                <div class="transaction-amount fw-bold text-success">+Rp 1.250.000</div>
-              </div>
-              <div class="transaction-item d-flex justify-content-between align-items-center p-3">
-                <div class="transaction-info">
-                  <div class="fw-bold">TOKO-BERKAH-ELEKTRONIK 1544...</div>
-                  <div class="transaction-date text-muted small">2025-10-01</div>
-                </div>
-                <div class="transaction-amount fw-bold text-success">+Rp 980.000</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STATISTIK -->
+        <!-- Barang -->
         <div class="col-md-4">
-          <div class="card mb-3">
-            <div class="card-body text-center">
-              <div class="stats-number display-5 fw-bold text-primary">15</div>
-              <div class="stats-label text-muted">Produk Terjual Hari Ini</div>
+          <div class="menu-card" onclick="window.location.href='{{ route('products.index') }}'">
+            <div class="menu-icon text-primary">
+              <i class="bi bi-box"></i>
             </div>
-          </div>
-
-          <div class="card mb-3">
-            <div class="card-body text-center">
-              <div class="stats-number display-5 fw-bold text-primary">Rp 8.5jt</div>
-              <div class="stats-label text-muted">Pendapatan Bulan Ini</div>
-            </div>
-          </div>
-
-          <div class="card mb-3">
-            <div class="card-body text-center">
-              <div class="stats-number display-5 fw-bold text-primary">124</div>
-              <div class="stats-label text-muted">Total Pelanggan</div>
-            </div>
+            <h4>Barang</h4>
           </div>
         </div>
+
+        <!-- Laporan Penjualan -->
+        <div class="col-md-4">
+          <div class="menu-card" onclick="window.location.href='{{ route('admin.report.index') }}'">
+            <div class="menu-icon text-success">
+              <i class="bi bi-bar-chart"></i>
+            </div>
+            <h4>Laporan Penjualan</h4>
+          </div>
+        </div>
+
+        <!-- Invoice -->
+        <div class="col-md-4">
+          <div class="menu-card" onclick="window.location.href='{{ route('admin.invoice.index', ['transaction' => 1]) }}'">
+            <div class="menu-icon text-warning">
+              <i class="bi bi-receipt"></i>
+            </div>
+            <h4>Invoice</h4>
+          </div>
+        </div>
+
       </div>
 
-    </div> <!-- END MAIN CONTENT -->
+      <!-- SUMMARY CARDS -->
+      <div class="row g-4 mt-4">
 
-  </div> <!-- END DASHBOARD CONTAINER -->
+        <!-- Produk Terjual -->
+        <div class="col-md-4">
+          <div class="menu-card">
+            <div class="menu-icon text-primary">
+              <i class="bi bi-cart-check"></i>
+            </div>
+            <h4>15</h4>
+            <p>Produk Terjual Hari Ini</p>
+          </div>
+        </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Pendapatan Bulan Ini -->
+        <div class="col-md-4">
+          <div class="menu-card">
+            <div class="menu-icon text-success">
+              <i class="bi bi-currency-dollar"></i>
+            </div>
+            <h4>Rp 8.5jt</h4>
+            <p>Pendapatan Bulan Ini</p>
+          </div>
+        </div>
+
+        <!-- Total Pelanggan -->
+        <div class="col-md-4">
+          <div class="menu-card">
+            <div class="menu-icon text-warning">
+              <i class="bi bi-people"></i>
+            </div>
+            <h4>124</h4>
+            <p>Total Pelanggan</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>

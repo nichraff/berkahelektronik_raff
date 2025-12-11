@@ -1,6 +1,5 @@
-@extends('layouts.app')
+@include('customers.dashboard.navbar') <!-- Navbar -->
 
-@section('content')
 <div class="container mt-4">
 
     <h3 class="mb-4">Keranjang Belanja</h3>
@@ -78,4 +77,3 @@
     @endif
 
 </div>
-@endsection

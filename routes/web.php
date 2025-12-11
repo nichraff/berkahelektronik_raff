@@ -9,7 +9,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\StripeController;
-use App\Http\Controllers\Customer\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,8 +21,7 @@ Route::get('/', fn() => redirect()->route('beranda'));
 Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 
 // Detail produk bisa diakses publik
-Route::get('/products/{product}', [ProductController::class, 'show'])
-    ->name('products.show');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +44,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| USER (PEMBELI)
+| USER ROUTES (PEMBELI)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
@@ -59,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
         }
         $products = \App\Models\Product::all();
         return view('customers.dashboard.pembeli', compact('products'));
-    })->name('user.dashboard');
+    })->name('user.dashboard'); // nama route user.dashboard
 
     // Cart
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -69,15 +67,15 @@ Route::middleware(['auth'])->group(function () {
 
     // Transaksi
     Route::post('/checkout', [TransactionController::class, 'checkout'])->name('checkout');
-    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])
-        ->name('transactions.show');
-    Route::get('/transactions/history', [TransactionController::class, 'history'])
-        ->name('transactions.history');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::get('/transactions/history', [TransactionController::class, 'history'])->name('transactions.history');
 
     // Stripe checkout
-    Route::get('/checkout/start', [StripeController::class, 'start'])->name('checkout.start');
-    Route::get('/checkout/success', [StripeController::class, 'success'])->name('checkout.success');
-    Route::get('/checkout/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
+    Route::prefix('checkout')->group(function () {
+        Route::get('/start', [StripeController::class, 'start'])->name('checkout.start');
+        Route::get('/success', [StripeController::class, 'success'])->name('checkout.success');
+        Route::get('/cancel', [StripeController::class, 'cancel'])->name('checkout.cancel');
+    });
 });
 
 /*
@@ -103,4 +101,16 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+});
+
+// Laporan Penjualan (Admin)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/laporan', [\App\Http\Controllers\Admin\ReportController::class, 'index'])
+        ->name('admin.report');
+});
+
+// Invoice Sederhana (Admin)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/invoice/{transaction}', [\App\Http\Controllers\Admin\InvoiceController::class, 'show'])
+        ->name('admin.invoice.show');
 });

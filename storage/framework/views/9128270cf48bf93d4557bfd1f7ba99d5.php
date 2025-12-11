@@ -57,7 +57,7 @@
 <body>
 
 <header>
-  @include('customers.dashboard.navbar')
+  <?php echo $__env->make('customers.dashboard.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 </header>
 
 <section>
@@ -65,17 +65,17 @@
     <!-- Banner -->
     <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            @for($i = 0; $i < 6; $i++)
-                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="{{ $i }}" class="@if($i==0) active @endif"></button>
-            @endfor
+            <?php for($i = 0; $i < 6; $i++): ?>
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="<?php echo e($i); ?>" class="<?php if($i==0): ?> active <?php endif; ?>"></button>
+            <?php endfor; ?>
         </div>
 
         <div class="carousel-inner">
-            @foreach([1,2,3,4,5,6] as $i)
-                <div class="carousel-item @if($i==1) active @endif">
-                    <img src="{{ asset('images/Banner Promo/'.$i.'.jpg') }}" class="d-block w-100">
+            <?php $__currentLoopData = [1,2,3,4,5,6]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="carousel-item <?php if($i==1): ?> active <?php endif; ?>">
+                    <img src="<?php echo e(asset('images/Banner Promo/'.$i.'.jpg')); ?>" class="d-block w-100">
                 </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
 
         <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
@@ -93,83 +93,86 @@
 
         <div class="row row-compact">
 
-            @forelse($products as $product)
+            <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
                 <div class="col-card-compact">
-                    <a href="{{ route('products.show', $product->id) }}" class="product-card-compact">
+                    <a href="<?php echo e(route('products.show', $product->id)); ?>" class="product-card-compact">
 
                         <div class="product-image-wrapper">
 
-                            @if($product->diskon > 0)
+                            <?php if($product->diskon > 0): ?>
                                 <div class="badge-above-image">
-                                    <div class="badge-sale-percent">SALE {{ $product->diskon }}%</div>
+                                    <div class="badge-sale-percent">SALE <?php echo e($product->diskon); ?>%</div>
                                 </div>
-                            @else
-                                @php
+                            <?php else: ?>
+                                <?php
                                     $isNew = isset($product->created_at)
                                         && \Carbon\Carbon::parse($product->created_at)->diffInDays(now()) < 7;
-                                @endphp
-                                @if($isNew)
+                                ?>
+                                <?php if($isNew): ?>
                                 <div class="badge-above-image">
                                     <div class="badge-new-only">NEW</div>
                                 </div>
-                                @endif
-                            @endif
+                                <?php endif; ?>
+                            <?php endif; ?>
 
                             <div class="product-image-compact">
-                                <img src="{{ $product->image_url }}"
-                                     alt="{{ $product->judul }}"
+                                <img src="<?php echo e($product->image_url); ?>"
+                                     alt="<?php echo e($product->judul); ?>"
                                      class="product-img-compact"
                                      onerror="this.src='https://via.placeholder.com/300x140?text=No+Image'">
                             </div>
                         </div>
 
-                        <div class="product-brand-compact">{{ $product->brand }}</div>
+                        <div class="product-brand-compact"><?php echo e($product->brand); ?></div>
 
                         <div class="product-title-compact">
-                            {{ strlen($product->judul) > 40 ? substr($product->judul,0,40).'...' : $product->judul }}
+                            <?php echo e(strlen($product->judul) > 40 ? substr($product->judul,0,40).'...' : $product->judul); ?>
+
                         </div>
 
                         <div class="product-price-compact">
-                            @php
+                            <?php
                                 $harga_diskon = $product->harga - ($product->harga * $product->diskon / 100);
-                            @endphp
+                            ?>
 
-                            <span class="current-price-compact {{ $product->diskon > 0 ? 'current-price-discount' : '' }}">
-                                Rp{{ number_format($harga_diskon,0,',','.') }}
+                            <span class="current-price-compact <?php echo e($product->diskon > 0 ? 'current-price-discount' : ''); ?>">
+                                Rp<?php echo e(number_format($harga_diskon,0,',','.')); ?>
+
                             </span>
 
-                            @if($product->diskon > 0)
+                            <?php if($product->diskon > 0): ?>
                                 <span class="original-price-compact">
-                                    Rp{{ number_format($product->harga,0,',','.') }}
+                                    Rp<?php echo e(number_format($product->harga,0,',','.')); ?>
+
                                 </span>
-                            @endif
+                            <?php endif; ?>
                         </div>
 
                     </a>
                 </div>
 
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
 
                 <div class="col-12 text-center py-4">
                     <p class="text-muted mb-2">Belum ada produk di database</p>
 
-                    @auth
-                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">Tambah Produk</a>
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Login untuk Tambah Produk</a>
-                    @endauth
+                    <?php if(auth()->guard()->check()): ?>
+                        <a href="<?php echo e(route('products.create')); ?>" class="btn btn-primary btn-sm">Tambah Produk</a>
+                    <?php else: ?>
+                        <a href="<?php echo e(route('login')); ?>" class="btn btn-primary btn-sm">Login untuk Tambah Produk</a>
+                    <?php endif; ?>
                 </div>
 
-            @endforelse
+            <?php endif; ?>
 
         </div>
 
         
 
-        @if(method_exists($products, 'links'))
-            <div class="mt-3">{{ $products->links() }}</div>
-        @endif
+        <?php if(method_exists($products, 'links')): ?>
+            <div class="mt-3"><?php echo e($products->links()); ?></div>
+        <?php endif; ?>
 
     </section>
 </section>
@@ -177,4 +180,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-</html>
+</html><?php /**PATH C:\laragon\www\TokoBerkahElektronik\berkahelektronik_raff\resources\views/customers/dashboard/pembeli.blade.php ENDPATH**/ ?>

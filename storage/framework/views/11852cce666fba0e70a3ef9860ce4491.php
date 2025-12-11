@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'My App')</title>
+    <title><?php echo $__env->yieldContent('title', 'My App'); ?></title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <style>
@@ -16,14 +16,14 @@
   <header class="border-bottom py-3 mb-4">
     <div class="container d-flex justify-content-between align-items-center">
       <a href="/" class="text-dark text-decoration-none">
-        <img src="{{ asset('images/logo_toko.jpg') }}" alt="Toko Kelontong" width="100">
+        <img src="<?php echo e(asset('images/logo_toko.jpg')); ?>" alt="Toko Kelontong" width="100">
       </a>
 
       <div class="d-flex align-items-center gap-3">
         <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
           ☰ Menu
         </button>
-        <a class="btn btn-danger" href="{{ route('logout') }}">
+        <a class="btn btn-danger" href="<?php echo e(route('logout')); ?>">
             Logout
         </a>
       </div>
@@ -31,7 +31,7 @@
   </header>
 
   <div class="container">
-      @yield('content')
+      <?php echo $__env->yieldContent('content'); ?>
   </div>
 
   <!-- Sidebar (Offcanvas Menu) -->
@@ -43,10 +43,10 @@
     <div class="offcanvas-body">
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
-          <a href="{{ route('user.dashboard') }}" class="text-decoration-none">🏠 Dashboard</a>
+          <a href="<?php echo e(route('user.dashboard')); ?>" class="text-decoration-none">🏠 Dashboard</a>
         </li>
         <li class="list-group-item">
-          <a href="{{ route('products.index') }}" class="text-decoration-none">📦 Products</a>
+          <a href="<?php echo e(route('products.index')); ?>" class="text-decoration-none">📦 Products</a>
         </li>
         <li class="list-group-item">
           <a href="#" class="text-decoration-none">👤 Profile</a>
@@ -58,3 +58,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
+<?php /**PATH C:\laragon\www\TokoBerkahElektronik\berkahelektronik_raff\resources\views/layouts/app.blade.php ENDPATH**/ ?>

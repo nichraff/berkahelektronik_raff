@@ -172,13 +172,12 @@
 
         {{-- SUDAH LOGIN --}}
         @auth
-            <a href="#">
-                <button class="buy-button">Beli Langsung</button>
-            </a>
 
-            <a href="#">
-                <button class="cart-button">+ Keranjang</button>
-            </a>
+        {{-- TAMBAH KE KERANJANG --}}
+        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+            @csrf
+            <button class="cart-button">+ Keranjang</button>
+        </form>
         @endauth
 
     </div>

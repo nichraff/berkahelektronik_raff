@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        /* --- semua CSS tetap --- */
+        /* --- CSS Produk --- */
         .product-card-compact {
             border: 1px solid #e0e0e0;
             border-radius: 8px;
@@ -22,9 +22,7 @@
             padding-bottom: 12px;
         }
 
-        .product-card-compact:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+        .product-card-compact:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
         .product-image-wrapper { position: relative; margin-bottom: 8px; padding-top: 22px; }
         .product-image-compact { height: 140px; overflow: hidden; background:#f5f5f5; border-radius:6px; margin:0 10px; display:flex; align-items:center; justify-content:center; }
@@ -69,7 +67,7 @@
         <div class="carousel-inner">
             @foreach([1,2,3,4,5,6] as $i)
                 <div class="carousel-item @if($i==1) active @endif">
-                    <img src="{{ asset('images/Banner Promo/'.$i.'.jpg') }}" class="d-block w-100" alt="Banner {{ $i }}">
+                    <img src="{{ secure_asset('images/Banner Promo/'.$i.'.jpg') }}" class="d-block w-100" alt="Banner {{ $i }}">
                 </div>
             @endforeach
         </div>
@@ -90,12 +88,10 @@
         <div class="row row-compact">
 
             @forelse($products as $product)
-
                 <div class="col-card-compact">
                     <a href="{{ route('products.show', $product->id) }}" class="product-card-compact">
 
                         <div class="product-image-wrapper">
-
                             @if($product->diskon > 0)
                                 <div class="badge-above-image">
                                     <div class="badge-sale-percent">SALE {{ $product->diskon }}%</div>
@@ -114,7 +110,7 @@
 
                             <div class="product-image-compact">
                                 @if($product->image_url)
-                                    <img src="{{ $product->image_url }}"
+                                    <img src="{{ Str::startsWith($product->image_url, ['http://','https://']) ? $product->image_url : secure_asset($product->image_url) }}"
                                          alt="{{ $product->judul }}"
                                          class="product-img-compact">
                                 @else
@@ -133,11 +129,9 @@
                             @php
                                 $harga_diskon = $product->harga - ($product->harga * $product->diskon / 100);
                             @endphp
-
                             <span class="current-price-compact {{ $product->diskon > 0 ? 'current-price-discount' : '' }}">
                                 Rp{{ number_format($harga_diskon,0,',','.') }}
                             </span>
-
                             @if($product->diskon > 0)
                                 <span class="original-price-compact">
                                     Rp{{ number_format($product->harga,0,',','.') }}
@@ -147,19 +141,15 @@
 
                     </a>
                 </div>
-
             @empty
-
                 <div class="col-12 text-center py-4">
                     <p class="text-muted mb-2">Belum ada produk di database</p>
-
                     @auth
                         <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">Tambah Produk</a>
                     @else
                         <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Login untuk Tambah Produk</a>
                     @endauth
                 </div>
-
             @endforelse
 
         </div>

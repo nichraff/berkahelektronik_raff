@@ -1,0 +1,150 @@
+<?php $__env->startSection('content'); ?>
+
+<style>
+/* Style form */
+.form-scrollable-wrapper {
+    max-height: 80vh; 
+    overflow-y: auto; 
+    padding-right: 15px;
+}
+.form-produk-pendek {
+    max-width: 450px;
+}
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    display: none;
+}
+.drive-help {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+</style>
+
+<div class="container mt-4">
+    <div class="row d-flex align-items-center">
+        <div class="col-md-4">
+            <h1>Tambah Produk</h1>
+        </div>
+        <div class="col-md-8">
+            <form class="form-produk-pendek" action="<?php echo e(route('products.store')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+
+                <?php if($errors->any()): ?>
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </ul>
+                </div>
+                <?php endif; ?>
+
+                <div class="form-scrollable-wrapper">
+
+                    <div class="mb-3">
+                        <label for="category_id">Kategori</label>
+                        <select name="category_id" id="category_id" class="form-control">
+                            <option value="">Pilih Kategori</option>
+                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($category->id); ?>" <?php echo e(old('category_id') == $category->id ? 'selected' : ''); ?>>
+                                    <?php echo e($category->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="brand">Brand</label>
+                        <input type="text" name="brand" class="form-control" value="<?php echo e(old('brand')); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="judul">Nama Produk</label>
+                        <input type="text" name="judul" class="form-control" value="<?php echo e(old('judul')); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="model">Model</label>
+                        <input type="text" name="model" class="form-control" value="<?php echo e(old('model')); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="stok">Stok Awal</label>
+                        <input type="number" name="stok" class="form-control" value="<?php echo e(old('stok')); ?>" min="0">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="harga">Harga</label>
+                        <input type="number" name="harga" class="form-control" value="<?php echo e(old('harga')); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="diskon">Diskon (%)</label>
+                        <input type="number" name="diskon" class="form-control" value="<?php echo e(old('diskon')); ?>" min="0" max="100">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="garansi">Garansi</label>
+                        <input type="text" name="garansi" class="form-control" value="<?php echo e(old('garansi')); ?>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="detail">Detail Produk</label>
+                        <textarea name="detail" class="form-control" rows="3"><?php echo e(old('detail')); ?></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image_url">URL Gambar dari Google Drive</label>
+                        <input type="url" name="image_url" id="image_url" class="form-control" 
+                               value="<?php echo e(old('image_url')); ?>" 
+                               placeholder="https://drive.google.com/uc?export=view&id=FILE_ID"
+                               onchange="previewImage(this.value)">
+
+                        <div class="drive-help">
+                            <small>
+                                Cara dapatkan URL: 
+                                <ol>
+                                    <li>Upload gambar ke Google Drive</li>
+                                    <li>Klik kanan → "Dapatkan link"</li>
+                                    <li>Setel akses menjadi "Siapa saja dengan link"</li>
+                                    <li>Salin ID file & tempel di placeholder</li>
+                                </ol>
+                            </small>
+                        </div>
+
+                        <img id="image_preview" class="image-preview" alt="Preview Gambar">
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                        <a href="<?php echo e(route('products.index')); ?>" class="btn btn-primary">Kembali</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(url) {
+    const img = document.getElementById('image_preview');
+    if(url) {
+        img.src = url;
+        img.style.display = 'block';
+    } else {
+        img.style.display = 'none';
+    }
+}
+</script>
+
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('products.layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/products/create.blade.php ENDPATH**/ ?>

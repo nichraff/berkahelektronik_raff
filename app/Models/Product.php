@@ -10,35 +10,28 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'kategori', 
-        'brand', 
-        'judul',   
+        'category_id',
+        'brand',
+        'judul',
         'model',
-        'stok',   
-        'harga',    
-        'diskon',   
-        'garansi', 
-        'detail', 
-        'image_url'  // ← DIUBAH dari 'image' menjadi 'image_url'
+        'harga',
+        'diskon',
+        'garansi',
+        'detail',
+        'stok',
+        'image_url'
     ];
-    
-    // Accessor untuk harga akhir
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
     public function getHargaAkhirAttribute()
     {
         $harga = $this->harga;
         $diskon = $this->diskon ?? 0;
-        return $harga - ($harga * $diskon / 100);
-    }
-    
-    // Relationship dengan Category
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'kategori', 'id');
-    }
 
-    // Scope untuk mendapatkan produk terbaru
-    public function scopeTerbaru($query)
-    {
-        return $query->orderBy('id', 'desc')->limit(1);
+        return $harga - ($harga * $diskon / 100);
     }
 }

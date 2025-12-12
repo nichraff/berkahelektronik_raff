@@ -1,4 +1,3 @@
- 
 <?php $__env->startSection('content'); ?>
 
 <h4 class="fw-bold mt-1 mb-3" style="font-size: 25px;">
@@ -55,15 +54,16 @@
         
         
         <td>
-            <?php if($product->image_url): ?>
-                <img src="<?php echo e($product->image_url); ?>" 
-                     class="product-image"
-                     style="max-width: 100px; max-height: 100px; border-radius: 5px; border: 1px solid #ddd; padding: 2px;"
-                     alt="<?php echo e($product->judul); ?>"
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<small class=\'text-muted\'>Image Error</small>';">
-            <?php else: ?>
-                <span class="text-muted">No Image</span>
-            <?php endif; ?>
+        <?php
+            $placeholder = 'https://drive.google.com/uc?export=view&id=15Ubr-kYNPIjph3G5Rnyspc02n6Zw_0LD';
+            $imgUrl = $product->image_url ?: $placeholder;
+        ?>
+
+        <img src="<?php echo e($imgUrl); ?>" 
+            class="product-image"
+            style="max-width:100px; max-height:100px; border-radius:5px; border:1px solid #ddd; padding:2px;"
+            alt="<?php echo e($product->judul); ?>"
+            onerror="this.src='<?php echo e($placeholder); ?>';">
         </td>
         
         <td>
@@ -97,4 +97,5 @@
 </style>
 
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('products.layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\TUGAS SCU\Github\berkahelektronik_raff\resources\views/products/index.blade.php ENDPATH**/ ?>

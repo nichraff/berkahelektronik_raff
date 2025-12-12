@@ -12,10 +12,9 @@ class ProductController extends Controller
 {
     public function __construct()
     {
-        // Cek admin untuk semua method kecuali show
+        // Middleware untuk admin di route admin/products/*
         $this->middleware(function ($request, $next) {
-            // Cek apakah sedang mengakses route admin/products/*
-            if (request()->is('admin/products*')) {
+            if ($request->is('admin/products*')) {
                 if (!auth()->check() || auth()->user()->role !== 'admin') {
                     return redirect()->route('user.dashboard')
                         ->with('error', 'Hanya admin yang bisa mengakses halaman produk');
@@ -25,6 +24,9 @@ class ProductController extends Controller
         })->except(['show']);
     }
 
+    // ===================================================
+    // DETAIL PRODUK
+    // ===================================================
     public function show(Product $product)
     {
         return view('customers.dashboard.detail', compact('product'));
@@ -35,26 +37,26 @@ class ProductController extends Controller
     // ===================================================
     public function index(Request $request): View
     {
-        $keyword = $request->input('keyword'); 
+        $keyword = $request->input('keyword');
 
         $products = Product::when($keyword, function ($query, $keyword) {
             return $query->where('judul', 'like', '%' . $keyword . '%');
         })
         ->latest()
         ->paginate(20)
-        ->withQueryString(); 
+        ->withQueryString();
 
-        return view('products.index', compact('products', 'keyword')) 
+        return view('products.index', compact('products', 'keyword'))
             ->with('i', (request()->input('page', 1) - 1) * 20);
     }
 
     // ===================================================
-    // PENCARIAN PRODUK DENGAN HIGHLIGHT
+    // PENCARIAN PRODUK
     // ===================================================
     public function search(Request $request): View
     {
         $keyword = $request->input('keyword', '');
-        
+
         $products = Product::when($keyword, function ($query, $keyword) {
             return $query->where('judul', 'like', '%' . $keyword . '%')
                         ->orWhere('brand', 'like', '%' . $keyword . '%')
@@ -78,36 +80,36 @@ class ProductController extends Controller
     }
 
     // ===================================================
-    // STORE / SIMPAN PRODUK
+    // STORE PRODUK
     // ===================================================
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'kategori' => 'required|exists:categories,id',
-            'brand'    => 'required|max:255',
-            'judul'    => 'required|max:255',
-            'model'    => 'required|max:255',
-            'stok'     => 'required|integer|min:0',
-            'harga'    => 'required|numeric|min:0',
-            'diskon'   => 'nullable|integer|min:0|max:100',
-            'garansi'  => 'nullable|max:255',
-            'detail'   => 'required',
-            'image_url' => 'required|url|max:500',
+            'category_id' => 'required|exists:categories,id',
+            'brand'       => 'required|max:255',
+            'judul'       => 'required|max:255',
+            'model'       => 'required|max:255',
+            'stok'        => 'required|integer|min:0',
+            'harga'       => 'required|numeric|min:0',
+            'diskon'      => 'nullable|integer|min:0|max:100',
+            'garansi'     => 'nullable|max:255',
+            'detail'      => 'required',
+            'image_url'   => 'required|url|max:500',
         ]);
 
         $imageUrl = $this->convertDriveUrl($request->image_url);
 
         $data = [
-            'kategori' => $request->kategori,
-            'brand'    => $request->brand,
-            'judul'    => $request->judul,
-            'model'    => $request->model,
-            'stok'     => $request->stok,
-            'harga'    => $request->harga,
-            'diskon'   => $request->diskon ?? 0,
-            'garansi'  => $request->garansi,
-            'detail'   => $request->detail,
-            'image_url' => $imageUrl,
+            'category_id' => $request->category_id,
+            'brand'       => $request->brand,
+            'judul'       => $request->judul,
+            'model'       => $request->model,
+            'stok'        => $request->stok,
+            'harga'       => $request->harga,
+            'diskon'      => $request->diskon ?? 0,
+            'garansi'     => $request->garansi,
+            'detail'      => $request->detail,
+            'image_url'   => $imageUrl,
         ];
 
         Product::create($data);
@@ -131,26 +133,32 @@ class ProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $request->validate([
-            'kategori' => 'required|exists:categories,id',
-            'brand'    => 'required|max:255',
-            'judul'    => 'required|max:255',
-            'model'    => 'required|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'brand'       => 'required|max:255',
+            'judul'       => 'required|max:255',
+            'model'       => 'required|max:255',
             'tambah_stok' => 'nullable|integer|min:0',
-            'harga'    => 'required|numeric|min:0',
-            'diskon'   => 'nullable|integer|min:0|max:100',
-            'garansi'  => 'nullable|max:255',
-            'detail'   => 'required',
-            'image_url' => 'nullable|url|max:500',
+            'harga'       => 'required|numeric|min:0',
+            'diskon'      => 'nullable|integer|min:0|max:100',
+            'garansi'     => 'nullable|max:255',
+            'detail'      => 'required',
+            'image_url'   => 'nullable|url|max:500',
         ]);
 
-        $data = $request->except(['image_url', 'tambah_stok']);
+        $data = $request->except(['tambah_stok', 'image_url']);
 
+        // update stok kumulatif
         $data['stok'] = $product->stok + ($request->tambah_stok ?? 0);
 
-        if ($request->has('image_url') && !empty($request->image_url)) {
+        // update kategori
+        $data['category_id'] = $request->category_id;
+
+        // update gambar (jika diganti)
+        if ($request->image_url) {
             $data['image_url'] = $this->convertDriveUrl($request->image_url);
         }
 
+        // default diskon = 0 jika kosong
         $data['diskon'] = $request->diskon ?? 0;
 
         $product->update($data);
@@ -170,7 +178,7 @@ class ProductController extends Controller
     }
 
     // ===================================================
-    // FUNGSI UNTUK KONVERSI URL GOOGLE DRIVE
+    // KONVERSI URL GOOGLE DRIVE KE GOOGLEUSERCONTENT
     // ===================================================
     private function convertDriveUrl($url)
     {
@@ -183,14 +191,12 @@ class ProductController extends Controller
         }
 
         $fileId = null;
-        
+
         if (preg_match('/\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
             $fileId = $matches[1];
-        }
-        elseif (preg_match('/[?&]id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
+        } elseif (preg_match('/[?&]id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
             $fileId = $matches[1];
-        }
-        elseif (preg_match('/open\?id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
+        } elseif (preg_match('/open\?id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
             $fileId = $matches[1];
         }
 

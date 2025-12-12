@@ -159,17 +159,17 @@ body {
 <nav class="navbar-main">
     <div class="navbar-container">
         @php
-    if (Auth::check()) {
-        $homeRoute = Auth::user()->role === 'admin'
-            ? route('admin.dashboard')
-            : route('user.dashboard'); // dashboard pembeli
-    } else {
-        $homeRoute = route('beranda'); // jika belum login
-    }
-@endphp
-    <a href="{{ $homeRoute }}" class="navbar-brand">
-        TOKO BERKAH<br>ELEKTRONIK
-    </a>
+            if (Auth::check()) {
+                $homeRoute = Auth::user()->role === 'admin'
+                    ? route('admin.dashboard')
+                    : route('user.dashboard'); // dashboard pembeli
+            } else {
+                $homeRoute = route('beranda'); // jika belum login
+            }
+        @endphp
+        <a href="{{ $homeRoute }}" class="navbar-brand">
+            TOKO BERKAH<br>ELEKTRONIK
+        </a>
 
         <div class="navbar-center-group">
             <div class="categories-dropdown">
@@ -224,13 +224,14 @@ body {
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="z-index:1050;">
                         <li>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Keluar
-                            </a>
+                            <!-- Logout pakai POST -->
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
                             </form>
+                            <a class="dropdown-item" href="#"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Keluar
+                            </a>
                         </li>
                     </ul>
                 </div>

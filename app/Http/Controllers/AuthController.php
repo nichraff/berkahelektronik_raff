@@ -25,30 +25,32 @@ class AuthController extends Controller
 
     // Proses login
     public function postLogin(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $user = Auth::user();
+    if (Auth::attempt($credentials)) {
 
-            // Redirect otomatis berdasarkan role
-            if ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } else {
-                return redirect()->route('user.dashboard');
-            }
+        $request->session()->regenerate();
+        $user = Auth::user();
+
+        // Redirect sesuai role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.',
-        ]);
+        return redirect()->route('user.dashboard');
     }
+
+    return back()->withErrors([
+        'email' => 'Email atau password salah.',
+    ]);
+}
+
 
     // Proses registrasi
     public function postRegistration(Request $request): RedirectResponse

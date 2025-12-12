@@ -12,24 +12,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-
-        /* CSS UNTUK HIDDEN SCROLLING  */
-        .hidden-scroll {
-            -ms-overflow-style: none; 
-            scrollbar-width: none;  
-        }
-        
-        .hidden-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        
-        /* CSS UNTUK FIXED HEADER TABEL */
-        .product-table thead {
-            position: sticky;
-            top: 0;
-            z-index: 10; 
-        }
-
         body {
             background-color: #fff;
             font-family: Arial, sans-serif;
@@ -43,90 +25,51 @@
             line-height: 1.1;
         }
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
+        .hidden-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .hidden-scroll::-webkit-scrollbar {
+            display: none;
         }
 
-        .product-table thead th {
-            background-color: #2f55ff !important;   
-            color: white !important;                
+        .product-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #2f55ff !important;
+            color: white;
             text-align: center;
             font-weight: 600;
         }
 
-
-        /* --- CUSTOM WIDTH UNTUK SETIAP KOLOM --- */
-
-        table.product-table th:nth-child(1) { width: 40px; }    /* No */
-        table.product-table th:nth-child(2) { width: 90px; }    /* Kategori */
-        table.product-table th:nth-child(3) { width: 90px; }    /* Brand */
-        table.product-table th:nth-child(4) { width: 110px; }   /* Judul */
-        table.product-table th:nth-child(5) { width: 80px; }    /* Model */
-        table.product-table th:nth-child(6) { width: 60px; }    /* Stok */
-        table.product-table th:nth-child(7) { width: 110px; }   /* Harga */
-        table.product-table th:nth-child(8) { width: 100px; }    /* Diskon */
-        table.product-table th:nth-child(9) { width: 130px; }   /* Harga Setelah Diskon */
-        table.product-table th:nth-child(10) { width: 90px; }   /* Garansi */
-        table.product-table th:nth-child(11) { width: 140px; }  /* Detail */
-        table.product-table th:nth-child(12) { width: 130px; }  /* Gambar */
-        table.product-table th:nth-child(13) { width: 110px; }  /* Action */
-
-        img.product-image {
-            width: 90px;
-            border-radius: 5px;
-        }
-
-
-        .table th, .table td {
+        .product-table th, .product-table td {
             border: 1px solid #dee2e6;
             text-align: center;
             vertical-align: middle;
             padding: 8px;
         }
 
-        
-        .table thead th {
-            border-top: none;
-            background-color: #f8f9fa;
-            font-weight: 600;
+        .product-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 5px;
         }
-
-        .card {
-            border: none;
-            box-shadow: none;
-        }
-
-        .btn {
-            border-radius: 6px;
-        }
-
     </style>
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; top: 0; width: 100%; z-index: 1030;">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
-
-            <a class="navbar-brand" href="#">
-                TOKO BERKAH<br>ELEKTRONIK
-            </a>
+            <a class="navbar-brand" href="#">TOKO BERKAH ELEKTRONIK</a>
 
             <div class="d-flex align-items-center">
+                <input type="text" class="form-control form-control-sm me-3" style="width:250px;" placeholder="Cari Elektronik">
 
-                <!-- Search -->
-                <input type="text" 
-                       class="form-control form-control-sm me-3" 
-                       style="width: 250px;" 
-                       placeholder="Cari Elektronik">
-
-                <!-- ICON USER -->
                 <i class="bi bi-person fs-4"></i>
 
-                <!-- ROLE / AUTH TEXT -->
                 @auth
                     @if(auth()->user()->role === 'admin')
                         <span class="ms-2 fw-bold">Admin</span>
@@ -138,11 +81,9 @@
                 @guest
                     <span class="ms-2 fw-bold">Guest</span>
                 @endguest
-
             </div>
         </div>
     </nav>
-    <!-- ================= END NAVBAR =============== -->
 
     <div class="container mt-4">
         @yield('content')

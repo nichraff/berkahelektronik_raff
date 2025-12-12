@@ -159,13 +159,9 @@ body {
 <nav class="navbar-main">
     <div class="navbar-container">
         @php
-            if (Auth::check()) {
-                $homeRoute = Auth::user()->role === 'admin'
-                    ? route('admin.dashboard')
-                    : route('user.dashboard'); // dashboard pembeli
-            } else {
-                $homeRoute = route('beranda'); // jika belum login
-            }
+            $homeRoute = Auth::check()
+                ? (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard'))
+                : route('beranda');
         @endphp
         <a href="{{ $homeRoute }}" class="navbar-brand">
             TOKO BERKAH<br>ELEKTRONIK
@@ -176,22 +172,9 @@ body {
                 <button class="category-btn" id="categoryToggle">Kategori</button>
                 <div class="categories-dropdown-content" id="categoryDropdown">
                     <div class="categories-grid">
-                        <div class="category-item">Televisi</div>
-                        <div class="category-item">Speaker</div>
-                        <div class="category-item">Proyektor</div>
-                        <div class="category-item">Microphone</div>
-                        <div class="category-item">AC</div>
-                        <div class="category-item">Kipas Angin</div>
-                        <div class="category-item">Kulkas</div>
-                        <div class="category-item">Teko Listrik</div>
-                        <div class="category-item">Air Fryer</div>
-                        <div class="category-item">Toaster</div>
-                        <div class="category-item">Kompor Listrik</div>
-                        <div class="category-item">Mixer</div>
-                        <div class="category-item">Dispenser</div>
-                        <div class="category-item">Blender</div>
-                        <div class="category-item">Rice Cooker</div>
-                        <div class="category-item">Microwave</div>
+                        @foreach(['Televisi','Speaker','Proyektor','Microphone','AC','Kipas Angin','Kulkas','Teko Listrik','Air Fryer','Toaster','Kompor Listrik','Mixer','Dispenser','Blender','Rice Cooker','Microwave'] as $category)
+                            <div class="category-item">{{ $category }}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -225,13 +208,13 @@ body {
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="z-index:1050;">
                         <li>
                             <!-- Logout pakai POST -->
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
                             <a class="dropdown-item" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Keluar
                             </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
                         </li>
                     </ul>
                 </div>

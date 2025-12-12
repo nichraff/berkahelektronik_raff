@@ -55,16 +55,12 @@
         
         {{-- GAMBAR --}}
         <td>
-        @php
-            $placeholder = 'https://drive.google.com/uc?export=view&id=15Ubr-kYNPIjph3G5Rnyspc02n6Zw_0LD';
-            $imgUrl = $product->image_url ?: $placeholder;
-        @endphp
-
-        <img src="{{ $imgUrl }}" 
-            class="product-image"
-            style="max-width:100px; max-height:100px; border-radius:5px; border:1px solid #ddd; padding:2px;"
-            alt="{{ $product->judul }}"
-            onerror="this.src='{{ $placeholder }}';">
+        @if($product->image_url)
+            <img src="{{ $product->image_url }}" 
+                 class="product-image"
+                 style="max-width:100px; max-height:100px; border-radius:5px; border:1px solid #ddd; padding:2px;"
+                 alt="{{ $product->judul }}">
+        @endif
         </td>
         
         <td>

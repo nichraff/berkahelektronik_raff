@@ -17,7 +17,7 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 5px;
-    display: none;
+    display: none; /* tampil hanya jika URL ada */
 }
 .drive-help {
     font-size: 0.875rem;
@@ -136,11 +136,11 @@
 <script>
 function previewImage(url) {
     const img = document.getElementById('image_preview');
-    if(url) {
+    if(url && url.trim() !== '') {
         img.src = url;
         img.style.display = 'block';
     } else {
-        img.style.display = 'none';
+        img.style.display = 'none'; // tidak tampil jika kosong
     }
 }
 </script>

@@ -2,7 +2,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
-/* ---------------------- CSS Navbar ---------------------- */
 body {
     background-color: #fff;
     font-family: Arial, sans-serif;
@@ -150,7 +149,6 @@ body {
 
 .main-content { margin-top: 80px; padding: 0; }
 
-/* Responsive Media Queries */
 @media (max-width: 1200px) { .navbar-main { padding: 15px 20px; } }
 @media (max-width: 992px) { .navbar-container { flex-wrap: wrap; } }
 @media (max-width: 768px) { .navbar-center-group { flex-wrap: wrap; } }
@@ -159,39 +157,22 @@ body {
 <nav class="navbar-main">
     <div class="navbar-container">
         <?php
-    if (Auth::check()) {
-        $homeRoute = Auth::user()->role === 'admin'
-            ? route('admin.dashboard')
-            : route('user.dashboard'); // dashboard pembeli
-    } else {
-        $homeRoute = route('beranda'); // jika belum login
-    }
-?>
-    <a href="<?php echo e($homeRoute); ?>" class="navbar-brand">
-        TOKO BERKAH<br>ELEKTRONIK
-    </a>
+            $homeRoute = Auth::check()
+                ? (Auth::user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard'))
+                : route('beranda');
+        ?>
+        <a href="<?php echo e($homeRoute); ?>" class="navbar-brand">
+            TOKO BERKAH<br>ELEKTRONIK
+        </a>
 
         <div class="navbar-center-group">
             <div class="categories-dropdown">
                 <button class="category-btn" id="categoryToggle">Kategori</button>
                 <div class="categories-dropdown-content" id="categoryDropdown">
                     <div class="categories-grid">
-                        <div class="category-item">Televisi</div>
-                        <div class="category-item">Speaker</div>
-                        <div class="category-item">Proyektor</div>
-                        <div class="category-item">Microphone</div>
-                        <div class="category-item">AC</div>
-                        <div class="category-item">Kipas Angin</div>
-                        <div class="category-item">Kulkas</div>
-                        <div class="category-item">Teko Listrik</div>
-                        <div class="category-item">Air Fryer</div>
-                        <div class="category-item">Toaster</div>
-                        <div class="category-item">Kompor Listrik</div>
-                        <div class="category-item">Mixer</div>
-                        <div class="category-item">Dispenser</div>
-                        <div class="category-item">Blender</div>
-                        <div class="category-item">Rice Cooker</div>
-                        <div class="category-item">Microwave</div>
+                        <?php $__currentLoopData = ['Televisi','Speaker','Proyektor','Microphone','AC','Kipas Angin','Kulkas','Teko Listrik','Air Fryer','Toaster','Kompor Listrik','Mixer','Dispenser','Blender','Rice Cooker','Microwave']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="category-item"><?php echo e($category); ?></div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -224,7 +205,7 @@ body {
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="z-index:1050;">
                         <li>
-                            <a class="dropdown-item" href="<?php echo e(route('logout')); ?>"
+                            <a class="dropdown-item" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Keluar
                             </a>
@@ -285,7 +266,7 @@ searchIcon.addEventListener('click', function(){
     else searchBox.focus();
 });
 
-// Tooltip untuk profil
+// Tooltip profil
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)

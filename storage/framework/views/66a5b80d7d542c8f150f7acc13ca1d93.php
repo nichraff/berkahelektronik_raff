@@ -27,7 +27,7 @@
         }
 
         .product-image-wrapper { position: relative; margin-bottom: 8px; padding-top: 22px; }
-        .product-image-compact { height: 140px; overflow: hidden; background:#f5f5f5; border-radius:6px; margin:0 10px; }
+        .product-image-compact { height: 140px; overflow: hidden; background:#f5f5f5; border-radius:6px; margin:0 10px; display:flex; align-items:center; justify-content:center; }
         .product-img-compact { width:100%; height:100%; object-fit:cover; }
 
         .badge-above-image { position:absolute; top:2px; left:12px; z-index:20; }
@@ -46,12 +46,8 @@
 
         .col-card-compact { margin-bottom:20px; }
 
-        @media(max-width:576px) {
-            .col-card-compact { width:50%; flex:0 0 50%; }
-        }
-        @media(min-width:1200px) {
-            .col-card-compact { width:20%; flex:0 0 20%; }
-        }
+        @media(max-width:576px) { .col-card-compact { width:50%; flex:0 0 50%; } }
+        @media(min-width:1200px) { .col-card-compact { width:20%; flex:0 0 20%; } }
     </style>
 </head>
 <body>
@@ -73,7 +69,7 @@
         <div class="carousel-inner">
             <?php $__currentLoopData = [1,2,3,4,5,6]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="carousel-item <?php if($i==1): ?> active <?php endif; ?>">
-                    <img src="<?php echo e(asset('images/Banner Promo/'.$i.'.jpg')); ?>" class="d-block w-100">
+                    <img src="<?php echo e(asset('images/Banner Promo/'.$i.'.jpg')); ?>" class="d-block w-100" alt="Banner <?php echo e($i); ?>">
                 </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -110,17 +106,20 @@
                                         && \Carbon\Carbon::parse($product->created_at)->diffInDays(now()) < 7;
                                 ?>
                                 <?php if($isNew): ?>
-                                <div class="badge-above-image">
-                                    <div class="badge-new-only">NEW</div>
-                                </div>
+                                    <div class="badge-above-image">
+                                        <div class="badge-new-only">NEW</div>
+                                    </div>
                                 <?php endif; ?>
                             <?php endif; ?>
 
                             <div class="product-image-compact">
-                                <img src="<?php echo e($product->image_url); ?>"
-                                     alt="<?php echo e($product->judul); ?>"
-                                     class="product-img-compact"
-                                     onerror="this.src='https://via.placeholder.com/300x140?text=No+Image'">
+                                <?php if($product->image_url): ?>
+                                    <img src="<?php echo e($product->image_url); ?>"
+                                         alt="<?php echo e($product->judul); ?>"
+                                         class="product-img-compact">
+                                <?php else: ?>
+                                    <span style="font-size:12px; color:#888;">Tidak ada gambar</span>
+                                <?php endif; ?>
                             </div>
                         </div>
 

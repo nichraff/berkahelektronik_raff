@@ -2,7 +2,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
-/* ---------------------- CSS Navbar ---------------------- */
 body {
     background-color: #fff;
     font-family: Arial, sans-serif;
@@ -150,7 +149,6 @@ body {
 
 .main-content { margin-top: 80px; padding: 0; }
 
-/* Responsive Media Queries */
 @media (max-width: 1200px) { .navbar-main { padding: 15px 20px; } }
 @media (max-width: 992px) { .navbar-container { flex-wrap: wrap; } }
 @media (max-width: 768px) { .navbar-center-group { flex-wrap: wrap; } }
@@ -207,7 +205,6 @@ body {
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="z-index:1050;">
                         <li>
-                            <!-- Logout pakai POST -->
                             <a class="dropdown-item" href="#"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Keluar
@@ -269,7 +266,7 @@ searchIcon.addEventListener('click', function(){
     else searchBox.focus();
 });
 
-// Tooltip untuk profil
+// Tooltip profil
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)

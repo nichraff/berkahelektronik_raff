@@ -23,7 +23,7 @@
         }
         .product-card-compact:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         .product-image-wrapper { position: relative; margin-bottom: 8px; padding-top: 22px; }
-        .product-image-compact { height: 140px; overflow: hidden; background:#f5f5f5; border-radius:6px; margin:0 10px; }
+        .product-image-compact { height: 140px; overflow: hidden; background:#f5f5f5; border-radius:6px; margin:0 10px; display:flex; align-items:center; justify-content:center; }
         .product-img-compact { width:100%; height:100%; object-fit:cover; }
         .badge-above-image { position:absolute; top:2px; left:12px; z-index:20; }
         .badge-sale-percent { background:#ff4444; color:white; padding:6px 12px; border-radius:14px; font-size:12px; font-weight:700; box-shadow:0 3px 6px rgba(0,0,0,0.2); }
@@ -49,6 +49,7 @@
 <section class="mt-4">
 
     <!-- Banner Carousel -->
+    @if(!empty($banners))
     <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             @foreach($banners as $index => $banner)
@@ -59,7 +60,7 @@
         <div class="carousel-inner">
             @foreach($banners as $index => $banner)
                 <div class="carousel-item @if($index==0) active @endif">
-                    <img src="{{ asset('images/Banner Promo/'.$banner) }}" class="d-block w-100" alt="Banner {{ $index+1 }}">
+                    <img src="{{ secure_asset('images/Banner Promo/'.$banner) }}" class="d-block w-100" alt="Banner {{ $index+1 }}">
                 </div>
             @endforeach
         </div>
@@ -71,6 +72,7 @@
             <span class="carousel-control-next-icon"></span>
         </button>
     </div>
+    @endif
 
     <!-- Daftar Produk -->
     <section class="container py-3">
@@ -82,7 +84,7 @@
                     $placeholder = 'https://via.placeholder.com/300x140?text=No+Image';
                     $imgUrl = $product->image_url;
 
-                    // Convert Google Drive link ke direct HTTPS jika perlu
+                    // Convert Google Drive link ke direct HTTPS
                     if($imgUrl && str_contains($imgUrl, 'drive.google.com')) {
                         if(preg_match('/\/file\/d\/([a-zA-Z0-9_-]+)/', $imgUrl, $matches)) {
                             $imgUrl = 'https://drive.google.com/uc?id='.$matches[1];
@@ -91,33 +93,23 @@
                         }
                     }
                     if(!$imgUrl) $imgUrl = $placeholder;
-                    
+
                     $isNew = isset($product->created_at) && \Carbon\Carbon::parse($product->created_at)->diffInDays(now()) < 7;
                     $harga_diskon = $product->harga - ($product->harga * $product->diskon / 100);
                 @endphp
 
                 <div class="col-card-compact">
                     <a href="{{ route('products.show', $product->id) }}" class="product-card-compact">
-
                         <div class="product-image-wrapper">
                             @if($product->diskon > 0)
-                                <div class="badge-above-image">
-                                    <div class="badge-sale-percent">SALE {{ $product->diskon }}%</div>
-                                </div>
+                                <div class="badge-above-image"><div class="badge-sale-percent">SALE {{ $product->diskon }}%</div></div>
                             @elseif($isNew)
-                                <div class="badge-above-image">
-                                    <div class="badge-new-only">NEW</div>
-                                </div>
+                                <div class="badge-above-image"><div class="badge-new-only">NEW</div></div>
                             @endif
-
                             <div class="product-image-compact">
-                                <img src="{{ $imgUrl }}" 
-                                     alt="{{ $product->judul }}" 
-                                     class="product-img-compact"
-                                     onerror="this.src='{{ $placeholder }}'">
+                                <img src="{{ $imgUrl }}" alt="{{ $product->judul }}" class="product-img-compact" onerror="this.src='{{ $placeholder }}'">
                             </div>
                         </div>
-
                         <div class="product-brand-compact">{{ $product->brand }}</div>
                         <div class="product-title-compact">{{ strlen($product->judul) > 40 ? substr($product->judul,0,40).'...' : $product->judul }}</div>
                         <div class="product-price-compact">
@@ -125,9 +117,7 @@
                                 Rp{{ number_format($harga_diskon,0,',','.') }}
                             </span>
                             @if($product->diskon > 0)
-                                <span class="original-price-compact">
-                                    Rp{{ number_format($product->harga,0,',','.') }}
-                                </span>
+                                <span class="original-price-compact">Rp{{ number_format($product->harga,0,',','.') }}</span>
                             @endif
                         </div>
                     </a>
